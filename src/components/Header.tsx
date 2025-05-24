@@ -52,12 +52,12 @@ export const Header = () => {
                 </Link>
               </li>
               <li>
-                <a 
-                  href="#" 
-                  className="text-sm text-gray-600 hover:text-indigo-600 transition-colors"
+                <Link 
+                  to="/settings" 
+                  className={`text-sm transition-colors ${isActive('/settings')}`}
                 >
                   설정
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
