@@ -31,6 +31,7 @@ export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogPro
     position: "",
     status: "pending" as Company["status"],
     applicationDate: new Date().toISOString().split('T')[0],
+    deadline: "",
     description: ""
   });
 
@@ -42,6 +43,7 @@ export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogPro
       position: "", 
       status: "pending",
       applicationDate: new Date().toISOString().split('T')[0],
+      deadline: "",
       description: ""
     });
     onClose();
@@ -55,7 +57,7 @@ export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogPro
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-white">
         <DialogHeader>
-          <DialogTitle>새 기업 추가</DialogTitle>
+          <DialogTitle className="text-xl font-bold text-center">새 기업 추가</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -67,6 +69,7 @@ export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogPro
               onChange={(e) => handleInputChange("name", e.target.value)}
               placeholder="기업명을 입력하세요"
               required
+              className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
             />
           </div>
 
@@ -78,13 +81,14 @@ export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogPro
               onChange={(e) => handleInputChange("position", e.target.value)}
               placeholder="지원 직무를 입력하세요"
               required
+              className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="status">지원 상태</Label>
             <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
-              <SelectTrigger>
+              <SelectTrigger className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white">
@@ -97,15 +101,29 @@ export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogPro
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="applicationDate">지원 날짜</Label>
-            <Input
-              id="applicationDate"
-              type="date"
-              value={formData.applicationDate}
-              onChange={(e) => handleInputChange("applicationDate", e.target.value)}
-              required
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="applicationDate">지원 날짜</Label>
+              <Input
+                id="applicationDate"
+                type="date"
+                value={formData.applicationDate}
+                onChange={(e) => handleInputChange("applicationDate", e.target.value)}
+                required
+                className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="deadline">마감일</Label>
+              <Input
+                id="deadline"
+                type="date"
+                value={formData.deadline}
+                onChange={(e) => handleInputChange("deadline", e.target.value)}
+                className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -116,10 +134,11 @@ export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogPro
               onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder="기업에 대한 간단한 설명을 입력하세요"
               rows={3}
+              className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
             />
           </div>
 
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-end space-x-2 pt-2">
             <Button type="button" variant="outline" onClick={onClose}>
               취소
             </Button>

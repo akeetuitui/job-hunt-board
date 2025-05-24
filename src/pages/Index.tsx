@@ -6,14 +6,23 @@ import { AddCompanyDialog } from "@/components/AddCompanyDialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
+export interface CoverLetterSection {
+  id: string;
+  title: string;
+  content: string;
+  maxLength?: number;
+}
+
 export interface Company {
   id: string;
   name: string;
   position: string;
   status: "applied" | "pending" | "interview" | "passed" | "rejected";
   applicationDate: string;
+  deadline?: string;
   description?: string;
   coverLetter?: string;
+  coverLetterSections?: CoverLetterSection[];
 }
 
 const Index = () => {
@@ -24,7 +33,22 @@ const Index = () => {
       position: "프론트엔드 개발자",
       status: "interview",
       applicationDate: "2024-05-20",
-      description: "대한민국 대표 IT 기업"
+      deadline: "2024-06-15",
+      description: "대한민국 대표 IT 기업",
+      coverLetterSections: [
+        {
+          id: "section1",
+          title: "지원 동기",
+          content: "네이버의 기술력과 혁신적인 서비스에 감명받아 지원하게 되었습니다.",
+          maxLength: 500
+        },
+        {
+          id: "section2",
+          title: "자신의 강점",
+          content: "프론트엔드 개발에 대한 깊은 이해와 사용자 경험을 중시하는 개발 철학을 가지고 있습니다.",
+          maxLength: 500
+        }
+      ]
     },
     {
       id: "2", 
@@ -32,6 +56,7 @@ const Index = () => {
       position: "백엔드 개발자",
       status: "applied",
       applicationDate: "2024-05-22",
+      deadline: "2024-06-30",
       description: "모바일 플랫폼 선도기업"
     },
     {

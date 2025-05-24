@@ -4,7 +4,7 @@ import { Company } from "@/pages/Index";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MoreVertical, Eye, Edit, Trash2, Calendar } from "lucide-react";
+import { MoreVertical, Eye, Trash2, Calendar, Briefcase } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CompanyDetailDialog } from "./CompanyDetailDialog";
 import { cn } from "@/lib/utils";
+import { Input } from "./ui/input";
 
 interface CompanyCardProps {
   company: Company;
@@ -30,6 +31,8 @@ export const CompanyCard = ({
   isDragging 
 }: CompanyCardProps) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isEditingDeadline, setIsEditingDeadline] = useState(false);
+  const [deadline, setDeadline] = useState(company.deadline || "");
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ko-KR', {
@@ -60,6 +63,15 @@ export const CompanyCard = ({
     return texts[status];
   };
 
+  const handleDeadlineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDeadline(e.target.value);
+  };
+
+  const saveDeadline = () => {
+    onUpdate({ ...company, deadline });
+    setIsEditingDeadline(false);
+  };
+
   return (
     <>
       <Card
@@ -74,7 +86,10 @@ export const CompanyCard = ({
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <h4 className="font-semibold text-gray-900 truncate">{company.name}</h4>
-              <p className="text-sm text-gray-600 truncate">{company.position}</p>
+              <p className="text-sm text-gray-600 truncate flex items-center gap-1">
+                <Briefcase className="w-3 h-3" />
+                {company.position}
+              </p>
             </div>
             
             <DropdownMenu>
@@ -108,16 +123,34 @@ export const CompanyCard = ({
               {getStatusText(company.status)}
             </Badge>
             
-            <div className="flex items-center text-xs text-gray-500">
-              <Calendar className="w-3 h-3 mr-1" />
-              {formatDate(company.applicationDate)}
+            <div className="flex items-center text-xs text-gray-500 justify-between">
+              <div className="flex items-center">
+                <Calendar className="w-3 h-3 mr-1" />
+                {formatDate(company.applicationDate)}
+              </div>
+
+              {isEditingDeadline ? (
+                <div className="flex items-center gap-1">
+                  <Input
+                    type="date"
+                    value={deadline}
+                    onChange={handleDeadlineChange}
+                    className="h-6 text-xs py-0 px-2 w-28"
+                    onBlur={saveDeadline}
+                    autoFocus
+                  />
+                </div>
+              ) : (
+                <div 
+                  className="flex items-center cursor-pointer hover:text-teal-600" 
+                  onClick={() => setIsEditingDeadline(true)}
+                >
+                  <span className="text-xs">
+                    {company.deadline ? `마감: ${formatDate(company.deadline)}` : "마감일 추가"}
+                  </span>
+                </div>
+              )}
             </div>
-            
-            {company.description && (
-              <p className="text-xs text-gray-600 line-clamp-2">
-                {company.description}
-              </p>
-            )}
           </div>
         </CardContent>
       </Card>
