@@ -46,7 +46,8 @@ export const StatusColumn = ({
   return (
     <div
       className={cn(
-        "rounded-xl border border-gray-100 bg-white p-3 min-h-[500px] transition-all duration-200 flex flex-col shadow-sm",
+        "rounded-xl border bg-white p-3 min-h-[500px] min-w-[280px] transition-all duration-200 flex flex-col shadow-sm",
+        statusConfig.color, // Apply the color directly from statusConfig
         isDraggingOver && `ring-2 ${statusConfig.shadow} bg-opacity-70`
       )}
       onDragOver={(e) => onDragOver(e, status)}

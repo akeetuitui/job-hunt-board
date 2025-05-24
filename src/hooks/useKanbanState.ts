@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Company } from "@/pages/Index";
 
@@ -12,12 +11,36 @@ type StatusConfigMap = Record<string, StatusConfig>;
 
 export const useKanbanState = () => {
   const defaultStatusConfig: StatusConfigMap = {
-    pending: { title: "지원 예정", color: "bg-gray-100 border-gray-200", shadow: "shadow-gray-200" },
-    applied: { title: "지원 완료", color: "bg-blue-50 border-blue-200", shadow: "shadow-blue-100" },
-    aptitude: { title: "인적성/역량 검사", color: "bg-purple-50 border-purple-200", shadow: "shadow-purple-100" },
-    interview: { title: "면접 진행", color: "bg-yellow-50 border-yellow-200", shadow: "shadow-yellow-100" },
-    passed: { title: "최종 합격", color: "bg-green-50 border-green-200", shadow: "shadow-green-100" },
-    rejected: { title: "불합격", color: "bg-red-50 border-red-200", shadow: "shadow-red-100" }
+    pending: { 
+      title: "지원 예정", 
+      color: "bg-gray-50 border-gray-200", 
+      shadow: "ring-gray-200" 
+    },
+    applied: { 
+      title: "지원 완료", 
+      color: "bg-blue-50 border-blue-200", 
+      shadow: "ring-blue-200" 
+    },
+    aptitude: { 
+      title: "인적성/역량 검사", 
+      color: "bg-purple-50 border-purple-200", 
+      shadow: "ring-purple-200" 
+    },
+    interview: { 
+      title: "면접 진행", 
+      color: "bg-yellow-50 border-yellow-200", 
+      shadow: "ring-yellow-200" 
+    },
+    passed: { 
+      title: "최종 합격", 
+      color: "bg-green-50 border-green-200", 
+      shadow: "ring-green-200" 
+    },
+    rejected: { 
+      title: "불합격", 
+      color: "bg-red-50 border-red-200", 
+      shadow: "ring-red-200" 
+    }
   };
 
   const [statusConfig, setStatusConfig] = useState<StatusConfigMap>(defaultStatusConfig);

@@ -2,6 +2,7 @@
 import { Company } from "@/pages/Index";
 import { StatusColumn } from "./kanban/StatusColumn";
 import { useKanbanState } from "@/hooks/useKanbanState";
+import { ScrollArea } from "./ui/scroll-area";
 
 interface KanbanBoardProps {
   companies: Company[];
@@ -40,25 +41,29 @@ export const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: Kan
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mt-6">
-      {statuses.map((status) => (
-        <StatusColumn
-          key={status}
-          status={status}
-          statusConfig={statusConfig[status]}
-          companies={companies}
-          isDraggingOver={isDraggingOver === status}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDropWrapper}
-          onEditTitle={handleEditStatusTitle}
-          onUpdateCompany={onUpdateCompany}
-          onDeleteCompany={onDeleteCompany}
-          onDragStart={handleDragStart}
-          draggedItem={draggedItem}
-          onAddCompany={handleAddCompany}
-        />
-      ))}
+    <div className="mt-6 overflow-hidden">
+      <ScrollArea className="w-full" orientation="horizontal">
+        <div className="flex gap-4 pb-4 px-1 min-w-max">
+          {statuses.map((status) => (
+            <StatusColumn
+              key={status}
+              status={status}
+              statusConfig={statusConfig[status]}
+              companies={companies}
+              isDraggingOver={isDraggingOver === status}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDropWrapper}
+              onEditTitle={handleEditStatusTitle}
+              onUpdateCompany={onUpdateCompany}
+              onDeleteCompany={onDeleteCompany}
+              onDragStart={handleDragStart}
+              draggedItem={draggedItem}
+              onAddCompany={handleAddCompany}
+            />
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   );
 };
