@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Calendar, FileText, Save, Plus, Trash2, Text, Clock } from "lucide-react";
+import { Building2, Calendar, FileText, Save, Plus, Trash2, Text, Clock, Link as LinkIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "./ui/card";
 
@@ -210,6 +210,21 @@ export const CompanyDetailDialog = ({
                   className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
                 />
               </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="applicationLink" className="text-gray-700 flex items-center">
+                <LinkIcon className="w-4 h-4 mr-1" />
+                지원 링크
+              </Label>
+              <Input
+                id="applicationLink"
+                type="url"
+                value={formData.applicationLink || ""}
+                onChange={(e) => handleInputChange("applicationLink", e.target.value)}
+                placeholder="https://"
+                className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
+              />
             </div>
 
             <div className="space-y-2">

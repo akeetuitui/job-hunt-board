@@ -1,11 +1,11 @@
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,79 +24,95 @@ interface AddCompanyDialogProps {
 export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogProps) => {
   const [open, setOpen] = useState(isOpen);
   const form = useForm();
+  
+  // Sync the open state with the isOpen prop
+  useEffect(() => {
+    setOpen(isOpen);
+  }, [isOpen]);
 
   const onSubmit = (data: any) => {
-    const newCompany = {
+    const newCompany: Omit<Company, "id" | "createdAt"> = {
       name: data.name,
       position: data.position,
       status: data.status as Company["status"],
-      deadline: data.deadline,
-      description: data.description,
-      createdAt: new Date().toISOString().split('T')[0] // Adding the missing field
+      deadline: data.deadline || undefined,
+      description: data.description || undefined,
+      applicationLink: data.applicationLink || undefined
     };
     
     onAdd(newCompany);
     setOpen(false);
+    onClose(); // Make sure to call the onClose prop
     form.reset();
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Add Company</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Company</DialogTitle>
+          <DialogTitle>기업 추가</DialogTitle>
           <DialogDescription>
-            Add a new company to your list. Click save when you're done.
+            새 기업을 추가하세요. 작성이 완료되면 저장을 누르세요.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Name
+              기업명
             </Label>
-            <Input id="name" defaultValue="" className="col-span-3" {...form.register("name")} />
+            <Input id="name" defaultValue="" className="col-span-3" {...form.register("name", { required: true })} />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="position" className="text-right">
-              Position
+              지원 직무
             </Label>
-            <Input id="position" defaultValue="" className="col-span-3" {...form.register("position")} />
+            <Input id="position" defaultValue="" className="col-span-3" {...form.register("position", { required: true })} />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="status" className="text-right">
-              Status
+              지원 상태
             </Label>
-            <Select {...form.register("status")}>
+            <Select onValueChange={(value) => form.setValue("status", value)} defaultValue="pending">
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select a status" />
+                <SelectValue placeholder="상태 선택" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="applied">Applied</SelectItem>
-                <SelectItem value="aptitude">Aptitude</SelectItem>
-                <SelectItem value="interview">Interview</SelectItem>
-                <SelectItem value="passed">Passed</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="pending">지원 예정</SelectItem>
+                <SelectItem value="applied">지원 완료</SelectItem>
+                <SelectItem value="aptitude">인적성/역량 검사</SelectItem>
+                <SelectItem value="interview">면접 진행</SelectItem>
+                <SelectItem value="passed">합격</SelectItem>
+                <SelectItem value="rejected">불합격</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="deadline" className="text-right">
-              Deadline
+              마감일
             </Label>
             <Input type="date" id="deadline" className="col-span-3" {...form.register("deadline")} />
           </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="applicationLink" className="text-right">
+              지원 링크
+            </Label>
+            <Input type="url" id="applicationLink" className="col-span-3" placeholder="https://" {...form.register("applicationLink")} />
+          </div>
           <div className="grid grid-cols-4 items-start gap-4">
             <Label htmlFor="description" className="text-right mt-2">
-              Description
+              기업 설명
             </Label>
             <Textarea id="description" className="col-span-3" {...form.register("description")} />
           </div>
           <div className="flex justify-end">
-            <Button type="submit">Add Company</Button>
+            <Button type="submit">기업 추가</Button>
           </div>
         </form>
       </DialogContent>

@@ -20,6 +20,7 @@ export interface Company {
   status: "pending" | "applied" | "aptitude" | "interview" | "passed" | "rejected";
   deadline?: string;
   description?: string;
+  applicationLink?: string;
   coverLetter?: string;
   coverLetterSections?: CoverLetterSection[];
   createdAt: string;
@@ -34,6 +35,7 @@ const Index = () => {
       status: "interview",
       deadline: "2024-06-15",
       description: "대한민국 대표 IT 기업",
+      applicationLink: "https://recruit.navercorp.com",
       coverLetterSections: [
         {
           id: "section1",
@@ -57,6 +59,7 @@ const Index = () => {
       status: "aptitude",
       deadline: "2024-06-30",
       description: "모바일 플랫폼 선도기업",
+      applicationLink: "https://careers.kakao.com",
       createdAt: "2023-05-21"
     },
     {

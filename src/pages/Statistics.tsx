@@ -21,6 +21,7 @@ const Statistics = () => {
         status: "interview",
         deadline: "2024-06-15",
         description: "대한민국 대표 IT 기업",
+        applicationLink: "https://recruit.navercorp.com",
         coverLetterSections: [
           {
             id: "section1",
@@ -44,6 +45,7 @@ const Statistics = () => {
         status: "aptitude",
         deadline: "2024-06-30",
         description: "모바일 플랫폼 선도기업",
+        applicationLink: "https://careers.kakao.com",
         createdAt: "2023-05-21"
       },
       {
@@ -99,18 +101,24 @@ const Statistics = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <h2 className="text-xl font-semibold mb-4">단계별 지원현황</h2>
-              <ApplicationStagesChart companies={companies} />
+              <div className="h-[300px]">
+                <ApplicationStagesChart companies={companies} />
+              </div>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <h2 className="text-xl font-semibold mb-4">지원 성공률</h2>
-              <SuccessRateChart companies={companies} />
+              <div className="h-[300px]">
+                <SuccessRateChart companies={companies} />
+              </div>
             </div>
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-sm border">
             <h2 className="text-xl font-semibold mb-4">지원 타임라인</h2>
-            <TimelineChart companies={companies} />
+            <div className="h-[400px]">
+              <TimelineChart companies={companies} />
+            </div>
           </div>
         </div>
       </main>
