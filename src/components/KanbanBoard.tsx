@@ -42,7 +42,7 @@ export const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: Kan
 
   return (
     <div className="mt-6 overflow-hidden">
-      <ScrollArea className="w-full">
+      <ScrollArea className="w-full" orientation="horizontal">
         <div className="flex gap-4 pb-4 px-1 min-w-max">
           {statuses.map((status) => (
             <StatusColumn

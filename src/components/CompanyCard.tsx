@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Company, PositionType } from "@/pages/Index";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -66,15 +65,9 @@ export const CompanyCard = ({
     return texts[status];
   };
 
-  const getPositionTypeBadgeColor = (positionType?: PositionType) => {
-    if (!positionType) return "bg-gray-100 text-gray-600";
-    
-    const colors = {
-      "신입": "bg-blue-100 text-blue-700",
-      "채용전환형인턴": "bg-purple-100 text-purple-700",
-      "체험형인턴": "bg-amber-100 text-amber-700"
-    };
-    return colors[positionType];
+  // Modified to always return light gray for any position type
+  const getPositionTypeBadgeColor = () => {
+    return "bg-gray-100 text-gray-600";
   };
 
   const handleDeadlineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +99,7 @@ export const CompanyCard = ({
                   {company.position}
                 </p>
                 {company.positionType && (
-                  <Badge variant="outline" className={cn("text-xs px-1.5 py-0 h-4", getPositionTypeBadgeColor(company.positionType))}>
+                  <Badge variant="outline" className={cn("text-xs px-1.5 py-0 h-4", getPositionTypeBadgeColor())}>
                     <UserRound className="w-2 h-2 mr-1" />
                     {company.positionType}
                   </Badge>
