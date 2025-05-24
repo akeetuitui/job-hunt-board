@@ -24,28 +24,29 @@ export const SuccessRateChart = ({ companies }: SuccessRateChartProps) => {
     Math.round((passedCount / decidedCompanies.length) * 100) : 0;
 
   return (
-    <div>
+    <div className="w-full h-full">
       <div className="text-center mb-4">
         <p className="text-gray-500 text-sm">최종 결정이 난 지원서 성공률</p>
         <h3 className="text-4xl font-bold">{successRate}%</h3>
       </div>
 
-      <div className="h-64">
+      <div style={{ width: '100%', height: 'calc(100% - 60px)' }}>
         <ChartContainer
           config={{
             passed: { color: "#22c55e" },
             rejected: { color: "#ef4444" },
             pending: { color: "#9ca3af" },
           }}
+          className="w-full h-full"
         >
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
+          <ResponsiveContainer>
+            <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
               <Pie
                 data={data}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                outerRadius={80}
+                outerRadius={70}
                 innerRadius={40}
                 dataKey="value"
               >
@@ -72,7 +73,11 @@ export const SuccessRateChart = ({ companies }: SuccessRateChartProps) => {
                   return null;
                 }}
               />
-              <Legend />
+              <Legend 
+                verticalAlign="bottom" 
+                height={36}
+                wrapperStyle={{ paddingTop: '10px' }}
+              />
             </PieChart>
           </ResponsiveContainer>
         </ChartContainer>

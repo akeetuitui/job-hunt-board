@@ -99,24 +99,24 @@ const Statistics = () => {
           <StatsOverview companies={companies} />
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="bg-white p-6 rounded-lg shadow-sm border overflow-hidden">
               <h2 className="text-xl font-semibold mb-4">단계별 지원현황</h2>
-              <div className="h-[300px]">
+              <div className="h-[300px] w-full">
                 <ApplicationStagesChart companies={companies} />
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="bg-white p-6 rounded-lg shadow-sm border overflow-hidden">
               <h2 className="text-xl font-semibold mb-4">지원 성공률</h2>
-              <div className="h-[300px]">
+              <div className="h-[300px] w-full">
                 <SuccessRateChart companies={companies} />
               </div>
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white p-6 rounded-lg shadow-sm border overflow-hidden">
             <h2 className="text-xl font-semibold mb-4">지원 타임라인</h2>
-            <div className="h-[400px]">
+            <div className="h-[400px] w-full">
               <TimelineChart companies={companies} />
             </div>
           </div>

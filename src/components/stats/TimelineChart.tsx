@@ -126,7 +126,7 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
   };
 
   return (
-    <div className="h-80">
+    <div className="w-full h-full">
       <ChartContainer
         config={{
           total: { color: "#6366f1" },
@@ -137,36 +137,50 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
           passed: { color: "#22c55e" },
           rejected: { color: "#ef4444" },
         }}
+        className="w-full h-full"
       >
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer>
           <LineChart
             data={chartData}
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="displayDate" />
-            <YAxis />
+            <XAxis 
+              dataKey="displayDate" 
+              tick={{ fontSize: 12 }}
+              height={30}
+            />
+            <YAxis 
+              tick={{ fontSize: 12 }}
+              width={30}
+            />
             <Tooltip content={<CustomTooltip />} />
-            <Legend />
+            <Legend 
+              verticalAlign="top" 
+              height={36}
+              wrapperStyle={{ paddingBottom: '10px' }}
+            />
             <Line 
               type="monotone" 
               dataKey="total" 
               stroke="#6366f1" 
               name="총 지원"
               strokeWidth={2}
-              dot={{ r: 4 }}
+              dot={{ r: 3 }}
             />
             <Line 
               type="monotone" 
               dataKey="passed" 
               stroke="#22c55e" 
               name="합격"
+              dot={{ r: 2 }}
             />
             <Line 
               type="monotone" 
               dataKey="rejected" 
               stroke="#ef4444" 
               name="불합격"
+              dot={{ r: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>

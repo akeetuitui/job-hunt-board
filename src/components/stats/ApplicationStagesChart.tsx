@@ -36,20 +36,8 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
     };
   });
 
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      "지원예정": "#9ca3af", // gray
-      "지원완료": "#3b82f6", // blue
-      "인적성/역량 검사": "#a855f7", // purple
-      "면접중": "#eab308", // yellow
-      "합격": "#22c55e", // green
-      "불합격": "#ef4444"  // red
-    };
-    return colors[status] || "#9ca3af";
-  };
-
   return (
-    <div>
+    <div className="w-full h-full">
       <div className="flex justify-end mb-4">
         <div className="flex bg-gray-100 rounded-md p-1">
           <Button
@@ -71,25 +59,28 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
         </div>
       </div>
 
-      <div className="h-64">
+      <div style={{ width: '100%', height: 'calc(100% - 40px)' }}>
         <ChartContainer
           config={{
             line1: { color: "#3b82f6" },
           }}
+          className="w-full h-full"
         >
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={statusCounts}>
+          <ResponsiveContainer>
+            <BarChart data={statusCounts} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
               <XAxis 
                 dataKey="name" 
                 axisLine={false} 
                 tickLine={false}
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 10 }}
+                height={40}
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false}
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 10 }}
                 unit={viewType === 'percentage' ? "%" : ""}
+                width={30}
               />
               <Tooltip
                 content={({ active, payload }) => {
