@@ -38,14 +38,25 @@ const Settings = () => {
   });
 
   const [browserNotificationSupported, setBrowserNotificationSupported] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
 
   useEffect(() => {
     setBrowserNotificationSupported('Notification' in window);
     
+    if ('Notification' in window) {
+      setNotificationPermission(Notification.permission);
+      
+      // 기존 권한이 granted면 토글을 true로 설정
+      if (Notification.permission === 'granted') {
+        setNotifications(prev => ({ ...prev, browserNotifications: true }));
+      }
+    }
+    
     // 로컬 스토리지에서 알림 설정 불러오기
     const savedNotifications = localStorage.getItem('jobtracker-notifications');
     if (savedNotifications) {
-      setNotifications(JSON.parse(savedNotifications));
+      const parsed = JSON.parse(savedNotifications);
+      setNotifications(parsed);
     }
     
     // 로컬 스토리지에서 환경설정 불러오기
@@ -66,7 +77,7 @@ const Settings = () => {
     }
   }, [profile]);
 
-  const requestNotificationPermission = async () => {
+  const handleBrowserNotificationToggle = async (checked: boolean) => {
     if (!browserNotificationSupported) {
       toast({
         title: "알림 지원 안됨",
@@ -76,27 +87,58 @@ const Settings = () => {
       return;
     }
 
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        setNotifications({...notifications, browserNotifications: true});
+    if (checked) {
+      // 토글을 켜려고 할 때 권한 요청
+      try {
+        console.log('알림 권한 요청 시작');
+        const permission = await Notification.requestPermission();
+        console.log('알림 권한 결과:', permission);
+        
+        setNotificationPermission(permission);
+        
+        if (permission === 'granted') {
+          setNotifications({...notifications, browserNotifications: true});
+          toast({
+            title: "알림 권한 허용됨",
+            description: "브라우저 알림이 활성화되었습니다.",
+          });
+          
+          // 테스트 알림 표시
+          new Notification("JobTracker", {
+            body: "알림이 성공적으로 설정되었습니다!",
+            icon: "/favicon.ico"
+          });
+        } else if (permission === 'denied') {
+          toast({
+            title: "알림 권한 거부됨",
+            description: "브라우저 설정에서 알림을 허용해주세요.",
+            variant: "destructive",
+          });
+          setNotifications({...notifications, browserNotifications: false});
+        } else {
+          // default 상태 (사용자가 나중에 결정하기를 선택)
+          toast({
+            title: "알림 설정 대기 중",
+            description: "알림 권한을 허용하면 브라우저 알림을 받을 수 있습니다.",
+          });
+          setNotifications({...notifications, browserNotifications: false});
+        }
+      } catch (error) {
+        console.error('알림 권한 요청 오류:', error);
         toast({
-          title: "알림 권한 허용됨",
-          description: "브라우저 알림이 활성화되었습니다.",
-        });
-        new Notification("JobTracker", {
-          body: "알림이 성공적으로 설정되었습니다!",
-          icon: "/favicon.ico"
-        });
-      } else {
-        toast({
-          title: "알림 권한 거부됨",
-          description: "브라우저 설정에서 알림을 허용해주세요.",
+          title: "알림 설정 오류",
+          description: "알림 권한 요청 중 오류가 발생했습니다.",
           variant: "destructive",
         });
+        setNotifications({...notifications, browserNotifications: false});
       }
-    } catch (error) {
-      console.error('Notification permission error:', error);
+    } else {
+      // 토글을 끄려고 할 때
+      setNotifications({...notifications, browserNotifications: false});
+      toast({
+        title: "브라우저 알림 비활성화",
+        description: "브라우저 알림이 비활성화되었습니다.",
+      });
     }
   };
 
@@ -158,6 +200,19 @@ const Settings = () => {
       description: "모든 로컬 데이터가 삭제되었습니다.",
       variant: "destructive",
     });
+  };
+
+  const getNotificationStatusText = () => {
+    if (!browserNotificationSupported) return "현재 브라우저에서 지원되지 않습니다";
+    
+    switch (notificationPermission) {
+      case 'granted':
+        return "브라우저에서 직접 알림을 받습니다";
+      case 'denied':
+        return "브라우저 설정에서 알림이 차단되었습니다";
+      default:
+        return "브라우저 알림 권한이 필요합니다";
+    }
   };
 
   if (loading) {
@@ -255,25 +310,14 @@ const Settings = () => {
                 <div className="space-y-0.5">
                   <Label>브라우저 알림</Label>
                   <p className="text-sm text-gray-500">
-                    {browserNotificationSupported 
-                      ? "브라우저에서 직접 알림을 받습니다" 
-                      : "현재 브라우저에서 지원되지 않습니다"}
+                    {getNotificationStatusText()}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
-                  {!notifications.browserNotifications && browserNotificationSupported && (
-                    <Button size="sm" onClick={requestNotificationPermission}>
-                      권한 요청
-                    </Button>
-                  )}
-                  <Switch
-                    checked={notifications.browserNotifications}
-                    disabled={!browserNotificationSupported}
-                    onCheckedChange={(checked) => 
-                      setNotifications({...notifications, browserNotifications: checked})
-                    }
-                  />
-                </div>
+                <Switch
+                  checked={notifications.browserNotifications && notificationPermission === 'granted'}
+                  disabled={!browserNotificationSupported}
+                  onCheckedChange={handleBrowserNotificationToggle}
+                />
               </div>
               
               <div className="flex items-center justify-between">
