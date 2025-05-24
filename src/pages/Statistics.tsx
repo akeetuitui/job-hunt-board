@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Company } from "@/pages/Index";
 import { StatsOverview } from "@/components/stats/StatsOverview";
@@ -11,7 +11,7 @@ const Statistics = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
 
   // Fetch companies from storage - in a real app this would come from API/localStorage
-  useState(() => {
+  useEffect(() => {
     // For now, we'll use the same mock data as in Index.tsx
     const mockCompanies: Company[] = [
       {
