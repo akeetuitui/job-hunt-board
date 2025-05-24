@@ -103,19 +103,19 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">지원현황 관리</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">지원현황 관리</h1>
             <p className="text-gray-600">취업 지원 현황을 한눈에 관리하세요</p>
           </div>
           
           <Button 
             onClick={() => setIsAddDialogOpen(true)}
-            className="bg-teal-600 hover:bg-teal-700 text-white"
+            className="shadow-sm"
           >
             <Plus className="w-4 h-4 mr-2" />
             기업 추가

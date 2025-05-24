@@ -24,34 +24,40 @@ export const SuccessRateChart = ({ companies }: SuccessRateChartProps) => {
     Math.round((passedCount / decidedCompanies.length) * 100) : 0;
 
   return (
-    <div className="w-full h-full">
-      <div className="text-center mb-4">
-        <p className="text-gray-500 text-sm">최종 결정이 난 지원서 성공률</p>
-        <h3 className="text-4xl font-bold">{successRate}%</h3>
+    <div className="w-full h-full flex flex-col">
+      <div className="text-center mb-2">
+        <p className="text-gray-500 text-sm font-medium">최종 결정이 난 지원서 성공률</p>
+        <h3 className="text-3xl font-bold text-teal-600">{successRate}%</h3>
       </div>
 
-      <div style={{ width: '100%', height: 'calc(100% - 60px)' }}>
+      <div className="flex-1 min-h-0">
         <ChartContainer
           config={{
-            passed: { color: "#22c55e" },
+            passed: { color: "#10b981" },
             rejected: { color: "#ef4444" },
             pending: { color: "#9ca3af" },
           }}
           className="w-full h-full"
         >
-          <ResponsiveContainer>
-            <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
               <Pie
                 data={data}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                outerRadius={70}
+                outerRadius={60}
                 innerRadius={40}
                 dataKey="value"
+                strokeWidth={1}
+                stroke="#fff"
               >
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.color} 
+                    className="drop-shadow-sm"
+                  />
                 ))}
               </Pie>
               <Tooltip
@@ -62,7 +68,7 @@ export const SuccessRateChart = ({ companies }: SuccessRateChartProps) => {
                       (data.value / companies.length) * 100
                     );
                     return (
-                      <div className="rounded-lg border bg-background p-2 shadow-md">
+                      <div className="rounded-lg border bg-white p-2 shadow-md">
                         <div className="font-medium">{data.name}</div>
                         <div className="text-sm">
                           {data.value}건 ({percent}%)
@@ -76,7 +82,9 @@ export const SuccessRateChart = ({ companies }: SuccessRateChartProps) => {
               <Legend 
                 verticalAlign="bottom" 
                 height={36}
-                wrapperStyle={{ paddingTop: '10px' }}
+                iconType="circle"
+                iconSize={8}
+                wrapperStyle={{ paddingTop: '10px', fontSize: '12px' }}
               />
             </PieChart>
           </ResponsiveContainer>

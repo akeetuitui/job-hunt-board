@@ -86,37 +86,37 @@ const Statistics = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">지원 통계 대시보드</h1>
-          <p className="text-gray-600">지원현황을 통계로 분석하고 관리하세요</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">지원 통계 대시보드</h1>
+          <p className="text-gray-600">지원현황을 분석하고 효과적으로 관리하세요</p>
         </div>
 
         <div className="grid gap-6">
           <StatsOverview companies={companies} />
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border overflow-hidden">
-              <h2 className="text-xl font-semibold mb-4">단계별 지원현황</h2>
-              <div className="h-[300px] w-full">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">단계별 지원현황</h2>
+              <div className="h-[280px]">
                 <ApplicationStagesChart companies={companies} />
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-lg shadow-sm border overflow-hidden">
-              <h2 className="text-xl font-semibold mb-4">지원 성공률</h2>
-              <div className="h-[300px] w-full">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">지원 성공률</h2>
+              <div className="h-[280px]">
                 <SuccessRateChart companies={companies} />
               </div>
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-sm border overflow-hidden">
-            <h2 className="text-xl font-semibold mb-4">지원 타임라인</h2>
-            <div className="h-[400px] w-full">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">지원 타임라인</h2>
+            <div className="h-[380px]">
               <TimelineChart companies={companies} />
             </div>
           </div>

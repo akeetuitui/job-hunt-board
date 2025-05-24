@@ -111,11 +111,12 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="rounded-lg border bg-background p-2 shadow-md">
-          <p className="label">{label}</p>
+        <div className="rounded-lg border bg-white p-3 shadow-md">
+          <p className="font-medium mb-1">{label}</p>
           {payload.filter((p: any) => p.value > 0).map((entry: any, index: number) => (
-            <p key={`item-${index}`} style={{ color: entry.color }}>
-              {entry.name}: {entry.value}
+            <p key={`item-${index}`} className="text-sm flex items-center gap-1.5 my-0.5">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }}></span>
+              <span>{entry.name}: <strong>{entry.value}</strong></span>
             </p>
           ))}
         </div>
@@ -131,34 +132,39 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
         config={{
           total: { color: "#6366f1" },
           pending: { color: "#9ca3af" },
-          applied: { color: "#3b82f6" },
-          aptitude: { color: "#a855f7" },
-          interview: { color: "#eab308" },
-          passed: { color: "#22c55e" },
+          applied: { color: "#0ea5e9" },
+          aptitude: { color: "#8b5cf6" },
+          interview: { color: "#f59e0b" },
+          passed: { color: "#10b981" },
           rejected: { color: "#ef4444" },
         }}
         className="w-full h-full"
       >
-        <ResponsiveContainer>
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 10, right: 10, left: -20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis 
               dataKey="displayDate" 
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 11 }}
               height={30}
+              padding={{ left: 10, right: 10 }}
+              axisLine={{ stroke: "#e5e5e5" }}
             />
             <YAxis 
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 11 }}
               width={30}
+              axisLine={{ stroke: "#e5e5e5" }}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend 
               verticalAlign="top" 
               height={36}
-              wrapperStyle={{ paddingBottom: '10px' }}
+              iconType="circle"
+              iconSize={8}
+              wrapperStyle={{ paddingBottom: '10px', fontSize: '12px' }}
             />
             <Line 
               type="monotone" 
@@ -166,21 +172,24 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
               stroke="#6366f1" 
               name="총 지원"
               strokeWidth={2}
-              dot={{ r: 3 }}
+              dot={{ r: 3, strokeWidth: 1, fill: '#fff' }}
+              activeDot={{ r: 5 }}
             />
             <Line 
               type="monotone" 
               dataKey="passed" 
-              stroke="#22c55e" 
+              stroke="#10b981" 
               name="합격"
-              dot={{ r: 2 }}
+              dot={{ r: 2, strokeWidth: 1, fill: '#fff' }}
+              activeDot={{ r: 4 }}
             />
             <Line 
               type="monotone" 
               dataKey="rejected" 
               stroke="#ef4444" 
               name="불합격"
-              dot={{ r: 2 }}
+              dot={{ r: 2, strokeWidth: 1, fill: '#fff' }}
+              activeDot={{ r: 4 }}
             />
           </LineChart>
         </ResponsiveContainer>
