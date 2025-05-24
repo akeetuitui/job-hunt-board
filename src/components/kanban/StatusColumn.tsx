@@ -48,7 +48,7 @@ export const StatusColumn = ({
       className={cn(
         "rounded-lg border-2 border-dashed p-4 min-h-[500px] transition-all duration-200",
         statusConfig.color,
-        isDraggingOver === status && `border-solid ${statusConfig.shadow} bg-opacity-70`
+        isDraggingOver && `border-solid ${statusConfig.shadow} bg-opacity-70`
       )}
       onDragOver={(e) => onDragOver(e, status)}
       onDragLeave={onDragLeave}

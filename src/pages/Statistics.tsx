@@ -18,6 +18,7 @@ const Statistics = () => {
         id: "1",
         name: "네이버",
         position: "프론트엔드 개발자",
+        positionType: "신입",
         status: "interview",
         deadline: "2024-06-15",
         description: "대한민국 대표 IT 기업",
@@ -42,6 +43,7 @@ const Statistics = () => {
         id: "2", 
         name: "카카오",
         position: "백엔드 개발자",
+        positionType: "채용전환형인턴",
         status: "aptitude",
         deadline: "2024-06-30",
         description: "모바일 플랫폼 선도기업",
@@ -52,6 +54,7 @@ const Statistics = () => {
         id: "3",
         name: "삼성전자",
         position: "소프트웨어 엔지니어", 
+        positionType: "체험형인턴",
         status: "passed",
         description: "글로벌 전자기업",
         createdAt: "2023-05-22"
@@ -60,6 +63,7 @@ const Statistics = () => {
         id: "4",
         name: "LG전자",
         position: "시스템 엔지니어", 
+        positionType: "신입",
         status: "rejected",
         description: "글로벌 가전기업",
         createdAt: "2023-06-01"
@@ -68,6 +72,7 @@ const Statistics = () => {
         id: "5",
         name: "현대자동차",
         position: "데이터 분석가", 
+        positionType: "채용전환형인턴",
         status: "applied",
         deadline: "2024-07-15",
         description: "자동차 제조기업",
@@ -77,6 +82,7 @@ const Statistics = () => {
         id: "6",
         name: "SK하이닉스",
         position: "반도체 공정 엔지니어", 
+        positionType: "신입",
         status: "passed",
         description: "반도체 제조기업",
         createdAt: "2023-06-10"

@@ -13,10 +13,13 @@ export interface CoverLetterSection {
   maxLength?: number;
 }
 
+export type PositionType = "신입" | "채용전환형인턴" | "체험형인턴";
+
 export interface Company {
   id: string;
   name: string;
   position: string;
+  positionType?: PositionType;
   status: "pending" | "applied" | "aptitude" | "interview" | "passed" | "rejected";
   deadline?: string;
   description?: string;
@@ -32,6 +35,7 @@ const Index = () => {
       id: "1",
       name: "네이버",
       position: "프론트엔드 개발자",
+      positionType: "신입",
       status: "interview",
       deadline: "2024-06-15",
       description: "대한민국 대표 IT 기업",
@@ -56,6 +60,7 @@ const Index = () => {
       id: "2", 
       name: "카카오",
       position: "백엔드 개발자",
+      positionType: "채용전환형인턴",
       status: "aptitude",
       deadline: "2024-06-30",
       description: "모바일 플랫폼 선도기업",
@@ -66,6 +71,7 @@ const Index = () => {
       id: "3",
       name: "삼성전자",
       position: "소프트웨어 엔지니어", 
+      positionType: "체험형인턴",
       status: "passed",
       description: "글로벌 전자기업",
       createdAt: "2023-05-22"

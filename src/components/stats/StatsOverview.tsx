@@ -2,12 +2,9 @@
 import { Company } from "@/pages/Index";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
-  BarChart3, 
-  CheckCircle2, 
-  Clock, 
-  FileX2, 
   Briefcase, 
-  PieChart 
+  CheckCircle2, 
+  FileCheck
 } from "lucide-react";
 
 interface StatsOverviewProps {
@@ -17,13 +14,25 @@ interface StatsOverviewProps {
 export const StatsOverview = ({ companies }: StatsOverviewProps) => {
   // Calculate statistics
   const totalApplications = companies.length;
-  const pendingApplications = companies.filter(c => c.status === "pending").length;
-  const activeApplications = companies.filter(c => !["pending", "passed", "rejected"].includes(c.status)).length;
-  const successfulApplications = companies.filter(c => c.status === "passed").length;
-  const rejectedApplications = companies.filter(c => c.status === "rejected").length;
   
-  const successRate = totalApplications ? 
-    Math.round((successfulApplications / (successfulApplications + rejectedApplications)) * 100) || 0 : 0;
+  // Document pass rate: companies that have reached aptitude/interview/passed stages
+  const documentsPassedApplications = companies.filter(c => 
+    ["aptitude", "interview", "passed"].includes(c.status)).length;
+  
+  // Calculate only applications that have completed the document stage (not pending or applied)
+  const pastDocumentStage = companies.filter(c => 
+    !["pending", "applied"].includes(c.status)).length;
+  
+  // Final pass rate
+  const successfulApplications = companies.filter(c => c.status === "passed").length;
+  const completedApplications = companies.filter(c => 
+    ["passed", "rejected"].includes(c.status)).length;
+  
+  const documentPassRate = pastDocumentStage ? 
+    Math.round((documentsPassedApplications / pastDocumentStage) * 100) || 0 : 0;
+  
+  const finalPassRate = completedApplications ? 
+    Math.round((successfulApplications / completedApplications) * 100) || 0 : 0;
   
   const stats = [
     {
@@ -34,44 +43,23 @@ export const StatsOverview = ({ companies }: StatsOverviewProps) => {
       bgColor: "bg-slate-100",
     },
     {
-      title: "지원 예정",
-      value: pendingApplications,
-      icon: Clock,
-      color: "text-blue-500",
-      bgColor: "bg-blue-50",
-    },
-    {
-      title: "진행 중",
-      value: activeApplications,
-      icon: BarChart3,
+      title: "서류합격률",
+      value: `${documentPassRate}%`,
+      icon: FileCheck,
       color: "text-amber-500",
       bgColor: "bg-amber-50",
     },
     {
-      title: "합격",
-      value: successfulApplications,
+      title: "최종합격률",
+      value: `${finalPassRate}%`,
       icon: CheckCircle2,
       color: "text-teal-600",
       bgColor: "bg-teal-50",
-    },
-    {
-      title: "불합격",
-      value: rejectedApplications,
-      icon: FileX2,
-      color: "text-rose-500",
-      bgColor: "bg-rose-50",
-    },
-    {
-      title: "합격률",
-      value: `${successRate}%`,
-      icon: PieChart,
-      color: "text-indigo-500",
-      bgColor: "bg-indigo-50",
     }
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    <div className="grid grid-cols-3 gap-4">
       {stats.map((stat) => (
         <Card key={stat.title} className="border border-gray-100 shadow-sm hover:shadow transition-shadow">
           <CardContent className="pt-6 px-4 pb-4">

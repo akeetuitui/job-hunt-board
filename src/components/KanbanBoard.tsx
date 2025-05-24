@@ -47,7 +47,7 @@ export const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: Kan
           status={status}
           statusConfig={statusConfig[status]}
           companies={companies}
-          isDraggingOver={isDraggingOver}
+          isDraggingOver={isDraggingOver === status}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDropWrapper}

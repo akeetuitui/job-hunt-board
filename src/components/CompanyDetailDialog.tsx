@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { Company, CoverLetterSection } from "@/pages/Index";
+import { Company, CoverLetterSection, PositionType } from "@/pages/Index";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Calendar, FileText, Save, Plus, Trash2, Text, Clock, Link as LinkIcon } from "lucide-react";
+import { Building2, Calendar, FileText, Save, Plus, Trash2, Text, Clock, Link as LinkIcon, UserRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "./ui/card";
 
@@ -177,6 +176,23 @@ export const CompanyDetailDialog = ({
                 onChange={(e) => handleInputChange("position", e.target.value)}
                 className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="positionType" className="text-gray-700">포지션 타입</Label>
+              <Select 
+                value={formData.positionType || ""} 
+                onValueChange={(value) => handleInputChange("positionType", value as PositionType)}
+              >
+                <SelectTrigger className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50">
+                  <SelectValue placeholder="포지션 타입 선택" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectItem value="신입">신입</SelectItem>
+                  <SelectItem value="채용전환형인턴">채용전환형인턴</SelectItem>
+                  <SelectItem value="체험형인턴">체험형인턴</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

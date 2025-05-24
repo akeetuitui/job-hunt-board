@@ -1,10 +1,10 @@
 
 import { useState } from "react";
-import { Company } from "@/pages/Index";
+import { Company, PositionType } from "@/pages/Index";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MoreVertical, Eye, Trash2, Calendar, Briefcase, Edit2, Clock } from "lucide-react";
+import { MoreVertical, Eye, Trash2, Calendar, Briefcase, Edit2, UserRound } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,6 +66,17 @@ export const CompanyCard = ({
     return texts[status];
   };
 
+  const getPositionTypeBadgeColor = (positionType?: PositionType) => {
+    if (!positionType) return "bg-gray-100 text-gray-600";
+    
+    const colors = {
+      "신입": "bg-blue-100 text-blue-700",
+      "채용전환형인턴": "bg-purple-100 text-purple-700",
+      "체험형인턴": "bg-amber-100 text-amber-700"
+    };
+    return colors[positionType];
+  };
+
   const handleDeadlineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDeadline(e.target.value);
   };
@@ -89,10 +100,18 @@ export const CompanyCard = ({
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <h4 className="font-semibold text-gray-900 truncate">{company.name}</h4>
-              <p className="text-sm text-gray-600 truncate flex items-center gap-1">
-                <Briefcase className="w-3 h-3" />
-                {company.position}
-              </p>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <p className="text-sm text-gray-600 truncate flex items-center gap-1">
+                  <Briefcase className="w-3 h-3" />
+                  {company.position}
+                </p>
+                {company.positionType && (
+                  <Badge variant="outline" className={cn("text-xs px-1.5 py-0.5 h-auto", getPositionTypeBadgeColor(company.positionType))}>
+                    <UserRound className="w-2 h-2 mr-1" />
+                    {company.positionType}
+                  </Badge>
+                )}
+              </div>
             </div>
             
             <DropdownMenu>
@@ -126,43 +145,38 @@ export const CompanyCard = ({
               {getStatusText(company.status)}
             </Badge>
             
-            <div className="flex items-center justify-between text-xs text-gray-500">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex items-center cursor-pointer group" onClick={() => setIsEditingDeadline(true)}>
-                      <Calendar className="w-3 h-3 mr-1" />
-                      {isEditingDeadline ? (
-                        <Input
-                          type="date"
-                          value={deadline}
-                          onChange={handleDeadlineChange}
-                          className="h-6 text-xs py-0 px-2 w-32"
-                          onBlur={saveDeadline}
-                          autoFocus
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                      ) : (
-                        <span>
-                          {company.deadline ? formatDate(company.deadline) : "마감일 설정"}
-                        </span>
-                      )}
-                      {!isEditingDeadline && (
+            {(company.deadline || isEditingDeadline) && (
+              <div className="flex items-center text-xs text-gray-500">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center cursor-pointer group" onClick={() => setIsEditingDeadline(true)}>
+                        <Calendar className="w-3 h-3 mr-1" />
+                        {isEditingDeadline ? (
+                          <Input
+                            type="date"
+                            value={deadline}
+                            onChange={handleDeadlineChange}
+                            className="h-6 text-xs py-0 px-2 w-32"
+                            onBlur={saveDeadline}
+                            autoFocus
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        ) : (
+                          <span>
+                            {company.deadline ? formatDate(company.deadline) : "마감일 설정"}
+                          </span>
+                        )}
                         <Edit2 className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      )}
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>클릭하여 마감일을 수정하세요</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              <div className="flex items-center" title="작성일">
-                <Clock className="w-3 h-3 mr-1" />
-                <span>{formatDate(company.createdAt)}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>클릭하여 마감일을 수정하세요</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-            </div>
+            )}
           </div>
         </CardContent>
       </Card>
