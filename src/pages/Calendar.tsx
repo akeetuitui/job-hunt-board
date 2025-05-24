@@ -87,6 +87,42 @@ const Calendar = () => {
     return mockEvents.some(event => isSameDay(event.date, date));
   };
 
+  const getEventsForDate = (date: Date) => {
+    return mockEvents.filter(event => isSameDay(event.date, date));
+  };
+
+  const renderDayContent = (date: Date) => {
+    const dayEvents = getEventsForDate(date);
+    const dayNumber = date.getDate();
+    
+    if (dayEvents.length === 0) {
+      return dayNumber;
+    }
+
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-start pt-1">
+        <div className="text-sm font-medium mb-1">{dayNumber}</div>
+        <div className="w-full space-y-0.5 px-0.5">
+          {dayEvents.slice(0, 2).map((event, index) => (
+            <div
+              key={`${event.id}-${index}`}
+              className="text-xs px-1 py-0.5 rounded text-center truncate bg-indigo-100 text-indigo-800 border border-indigo-200"
+              title={`${event.company} - ${event.title}`}
+            >
+              <div className="font-medium truncate">{event.company}</div>
+              <div className="text-[10px] truncate">{getEventTypeLabel(event.type)}</div>
+            </div>
+          ))}
+          {dayEvents.length > 2 && (
+            <div className="text-[10px] text-gray-500 text-center">
+              +{dayEvents.length - 2}개
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Header />
@@ -130,8 +166,8 @@ const Calendar = () => {
                     head_row: "flex w-full",
                     head_cell: "text-gray-500 rounded-md w-full font-medium text-sm py-2",
                     row: "flex w-full mt-2",
-                    cell: "h-12 w-full text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                    day: "h-12 w-full p-0 font-normal aria-selected:opacity-100 hover:bg-gray-100 rounded-md transition-colors",
+                    cell: "h-20 w-full text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                    day: "h-20 w-full p-0 font-normal aria-selected:opacity-100 hover:bg-gray-100 rounded-md transition-colors",
                     day_range_end: "day-range-end",
                     day_selected: "bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white focus:bg-indigo-600 focus:text-white",
                     day_today: "bg-gray-100 text-gray-900 font-semibold",
@@ -140,16 +176,12 @@ const Calendar = () => {
                     day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
                     day_hidden: "invisible",
                   }}
+                  components={{
+                    DayContent: ({ date }) => renderDayContent(date)
+                  }}
                   modifiers={{
                     hasEvents: (date) => hasEvents(date),
                     today: (date) => isToday(date)
-                  }}
-                  modifiersStyles={{
-                    hasEvents: {
-                      backgroundColor: "#e0e7ff",
-                      color: "#3730a3",
-                      fontWeight: "600"
-                    }
                   }}
                 />
               </CardContent>
