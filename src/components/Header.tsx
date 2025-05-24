@@ -44,12 +44,12 @@ export const Header = () => {
                 </Link>
               </li>
               <li>
-                <a 
-                  href="#" 
-                  className="text-sm text-gray-600 hover:text-indigo-600 transition-colors"
+                <Link 
+                  to="/calendar" 
+                  className={`text-sm transition-colors ${isActive('/calendar')}`}
                 >
                   캘린더
-                </a>
+                </Link>
               </li>
               <li>
                 <a 
