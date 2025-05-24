@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,14 +9,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Bell, Download, Trash2, Globe, Palette, Shield } from "lucide-react";
+import { useProfile } from "@/hooks/useProfile";
 
 const Settings = () => {
   const { toast } = useToast();
-  const [profile, setProfile] = useState({
-    name: "사용자",
-    email: "user@example.com",
-    phone: "",
-    bio: ""
+  const { profile, loading, updateProfile } = useProfile();
+  
+  const [profileForm, setProfileForm] = useState({
+    full_name: "",
+    email: "",
+    university: "",
+    major: ""
   });
   
   const [notifications, setNotifications] = useState({
@@ -38,9 +40,31 @@ const Settings = () => {
   const [browserNotificationSupported, setBrowserNotificationSupported] = useState(false);
 
   useEffect(() => {
-    // 브라우저 알림 지원 여부 확인
     setBrowserNotificationSupported('Notification' in window);
+    
+    // 로컬 스토리지에서 알림 설정 불러오기
+    const savedNotifications = localStorage.getItem('jobtracker-notifications');
+    if (savedNotifications) {
+      setNotifications(JSON.parse(savedNotifications));
+    }
+    
+    // 로컬 스토리지에서 환경설정 불러오기
+    const savedPreferences = localStorage.getItem('jobtracker-preferences');
+    if (savedPreferences) {
+      setPreferences(JSON.parse(savedPreferences));
+    }
   }, []);
+
+  useEffect(() => {
+    if (profile) {
+      setProfileForm({
+        full_name: profile.full_name || "",
+        email: profile.email || "",
+        university: profile.university || "",
+        major: profile.major || ""
+      });
+    }
+  }, [profile]);
 
   const requestNotificationPermission = async () => {
     if (!browserNotificationSupported) {
@@ -60,7 +84,6 @@ const Settings = () => {
           title: "알림 권한 허용됨",
           description: "브라우저 알림이 활성화되었습니다.",
         });
-        // 테스트 알림
         new Notification("JobTracker", {
           body: "알림이 성공적으로 설정되었습니다!",
           icon: "/favicon.ico"
@@ -77,12 +100,11 @@ const Settings = () => {
     }
   };
 
-  const handleProfileSave = () => {
-    // 로컬 스토리지에 저장
-    localStorage.setItem('jobtracker-profile', JSON.stringify(profile));
-    toast({
-      title: "프로필 저장됨",
-      description: "프로필 정보가 성공적으로 저장되었습니다.",
+  const handleProfileSave = async () => {
+    const success = await updateProfile({
+      full_name: profileForm.full_name,
+      university: profileForm.university,
+      major: profileForm.major
     });
   };
 
@@ -104,7 +126,7 @@ const Settings = () => {
 
   const handleDataExport = () => {
     const data = {
-      profile,
+      profile: profileForm,
       notifications,
       preferences,
       exportDate: new Date().toISOString()
@@ -127,7 +149,6 @@ const Settings = () => {
   };
 
   const handleDataClear = () => {
-    localStorage.removeItem('jobtracker-profile');
     localStorage.removeItem('jobtracker-notifications');
     localStorage.removeItem('jobtracker-preferences');
     localStorage.removeItem('jobtracker-applications');
@@ -138,6 +159,17 @@ const Settings = () => {
       variant: "destructive",
     });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -167,8 +199,8 @@ const Settings = () => {
                   <Label htmlFor="name">이름</Label>
                   <Input
                     id="name"
-                    value={profile.name}
-                    onChange={(e) => setProfile({...profile, name: e.target.value})}
+                    value={profileForm.full_name}
+                    onChange={(e) => setProfileForm({...profileForm, full_name: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
@@ -176,29 +208,32 @@ const Settings = () => {
                   <Input
                     id="email"
                     type="email"
-                    value={profile.email}
-                    onChange={(e) => setProfile({...profile, email: e.target.value})}
+                    value={profileForm.email}
+                    disabled
+                    className="bg-gray-100"
                   />
+                  <p className="text-xs text-gray-500">이메일은 변경할 수 없습니다</p>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">전화번호</Label>
-                <Input
-                  id="phone"
-                  value={profile.phone}
-                  onChange={(e) => setProfile({...profile, phone: e.target.value})}
-                  placeholder="010-0000-0000"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bio">자기소개</Label>
-                <Textarea
-                  id="bio"
-                  value={profile.bio}
-                  onChange={(e) => setProfile({...profile, bio: e.target.value})}
-                  placeholder="간단한 자기소개를 작성해주세요"
-                  rows={3}
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="university">대학교</Label>
+                  <Input
+                    id="university"
+                    value={profileForm.university}
+                    onChange={(e) => setProfileForm({...profileForm, university: e.target.value})}
+                    placeholder="예: 서울대학교"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="major">학과</Label>
+                  <Input
+                    id="major"
+                    value={profileForm.major}
+                    onChange={(e) => setProfileForm({...profileForm, major: e.target.value})}
+                    placeholder="예: 컴퓨터공학과"
+                  />
+                </div>
               </div>
               <Button onClick={handleProfileSave}>프로필 저장</Button>
             </CardContent>
