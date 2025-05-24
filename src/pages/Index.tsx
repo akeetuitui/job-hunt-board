@@ -4,7 +4,9 @@ import { Header } from "@/components/Header";
 import { KanbanBoard } from "@/components/KanbanBoard";
 import { AddCompanyDialog } from "@/components/AddCompanyDialog";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export interface CoverLetterSection {
   id: string;
@@ -30,55 +32,17 @@ export interface Company {
 }
 
 const Index = () => {
-  const [companies, setCompanies] = useState<Company[]>([
-    {
-      id: "1",
-      name: "네이버",
-      position: "프론트엔드 개발자",
-      positionType: "신입",
-      status: "interview",
-      deadline: "2024-06-15",
-      description: "대한민국 대표 IT 기업",
-      applicationLink: "https://recruit.navercorp.com",
-      coverLetterSections: [
-        {
-          id: "section1",
-          title: "지원 동기",
-          content: "네이버의 기술력과 혁신적인 서비스에 감명받아 지원하게 되었습니다.",
-          maxLength: 500
-        },
-        {
-          id: "section2",
-          title: "자신의 강점",
-          content: "프론트엔드 개발에 대한 깊은 이해와 사용자 경험을 중시하는 개발 철학을 가지고 있습니다.",
-          maxLength: 500
-        }
-      ],
-      createdAt: "2023-05-20"
-    },
-    {
-      id: "2", 
-      name: "카카오",
-      position: "백엔드 개발자",
-      positionType: "채용전환형인턴",
-      status: "aptitude",
-      deadline: "2024-06-30",
-      description: "모바일 플랫폼 선도기업",
-      applicationLink: "https://careers.kakao.com",
-      createdAt: "2023-05-21"
-    },
-    {
-      id: "3",
-      name: "삼성전자",
-      position: "소프트웨어 엔지니어", 
-      positionType: "체험형인턴",
-      status: "passed",
-      description: "글로벌 전자기업",
-      createdAt: "2023-05-22"
-    }
-  ]);
-
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
+  // Redirect to auth page if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth');
+    }
+  }, [user, loading, navigate]);
 
   useEffect(() => {
     const openAddDialog = () => setIsAddDialogOpen(true);
@@ -88,6 +52,23 @@ const Index = () => {
       window.removeEventListener('openAddCompanyDialog', openAddDialog);
     };
   }, []);
+
+  // Show loading spinner while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
+          <p className="text-gray-600">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if user is not authenticated
+  if (!user) {
+    return null;
+  }
 
   const addCompany = (company: Omit<Company, "id" | "createdAt">) => {
     const newCompany: Company = {
