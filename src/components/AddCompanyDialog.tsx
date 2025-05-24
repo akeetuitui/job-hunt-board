@@ -1,150 +1,102 @@
-
 import { useState } from "react";
-import { Company } from "@/pages/Index";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { Company } from "@/pages/Index";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface AddCompanyDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (company: Omit<Company, "id">) => void;
+  onAdd: (company: Omit<Company, "id" | "createdAt">) => void;
 }
 
 export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogProps) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    position: "",
-    status: "pending" as Company["status"],
-    applicationDate: new Date().toISOString().split('T')[0],
-    deadline: "",
-    description: ""
-  });
+  const [open, setOpen] = useState(isOpen);
+  const form = useForm();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onAdd(formData);
-    setFormData({
-      name: "",
-      position: "", 
-      status: "pending",
-      applicationDate: new Date().toISOString().split('T')[0],
-      deadline: "",
-      description: ""
-    });
-    onClose();
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const onSubmit = (data: any) => {
+    const newCompany = {
+      name: data.name,
+      position: data.position,
+      status: data.status as Company["status"],
+      deadline: data.deadline,
+      description: data.description,
+      createdAt: new Date().toISOString().split('T')[0] // Adding the missing field
+    };
+    
+    onAdd(newCompany);
+    setOpen(false);
+    form.reset();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-white">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline">Add Company</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-center">새 기업 추가</DialogTitle>
+          <DialogTitle>Add Company</DialogTitle>
+          <DialogDescription>
+            Add a new company to your list. Click save when you're done.
+          </DialogDescription>
         </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">기업명</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              placeholder="기업명을 입력하세요"
-              required
-              className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
-            />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Name
+            </Label>
+            <Input id="name" defaultValue="" className="col-span-3" {...form.register("name")} />
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="position">지원 직무</Label>
-            <Input
-              id="position"
-              value={formData.position}
-              onChange={(e) => handleInputChange("position", e.target.value)}
-              placeholder="지원 직무를 입력하세요"
-              required
-              className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
-            />
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="position" className="text-right">
+              Position
+            </Label>
+            <Input id="position" defaultValue="" className="col-span-3" {...form.register("position")} />
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="status">지원 상태</Label>
-            <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
-              <SelectTrigger className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50">
-                <SelectValue />
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="status" className="text-right">
+              Status
+            </Label>
+            <Select {...form.register("status")}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select a status" />
               </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="pending">지원 예정</SelectItem>
-                <SelectItem value="applied">지원 완료</SelectItem>
-                <SelectItem value="interview">면접 진행</SelectItem>
-                <SelectItem value="passed">최종 합격</SelectItem>
-                <SelectItem value="rejected">불합격</SelectItem>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="applied">Applied</SelectItem>
+                <SelectItem value="aptitude">Aptitude</SelectItem>
+                <SelectItem value="interview">Interview</SelectItem>
+                <SelectItem value="passed">Passed</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
               </SelectContent>
             </Select>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="applicationDate">지원 날짜</Label>
-              <Input
-                id="applicationDate"
-                type="date"
-                value={formData.applicationDate}
-                onChange={(e) => handleInputChange("applicationDate", e.target.value)}
-                required
-                className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="deadline">마감일</Label>
-              <Input
-                id="deadline"
-                type="date"
-                value={formData.deadline}
-                onChange={(e) => handleInputChange("deadline", e.target.value)}
-                className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
-              />
-            </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="deadline" className="text-right">
+              Deadline
+            </Label>
+            <Input type="date" id="deadline" className="col-span-3" {...form.register("deadline")} />
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">기업 설명</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-              placeholder="기업에 대한 간단한 설명을 입력하세요"
-              rows={3}
-              className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
-            />
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label htmlFor="description" className="text-right mt-2">
+              Description
+            </Label>
+            <Textarea id="description" className="col-span-3" {...form.register("description")} />
           </div>
-
-          <div className="flex justify-end space-x-2 pt-2">
-            <Button type="button" variant="outline" onClick={onClose}>
-              취소
-            </Button>
-            <Button type="submit" className="bg-teal-600 hover:bg-teal-700">
-              추가
-            </Button>
+          <div className="flex justify-end">
+            <Button type="submit">Add Company</Button>
           </div>
         </form>
       </DialogContent>

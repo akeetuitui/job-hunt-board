@@ -1,7 +1,14 @@
 
 import { Building2 } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 export const Header = () => {
+  const location = useLocation();
+  
+  const isActive = (path: string) => {
+    return location.pathname === path ? "text-teal-600 font-medium" : "text-gray-600 hover:text-teal-600";
+  };
+  
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-10">
       <div className="container mx-auto px-4 py-4">
@@ -21,27 +28,27 @@ export const Header = () => {
           <nav>
             <ul className="flex items-center space-x-6">
               <li>
-                <a 
-                  href="#" 
-                  className="text-sm font-medium text-teal-600 hover:text-teal-800 transition-colors"
+                <Link 
+                  to="/" 
+                  className={`text-sm transition-colors ${isActive('/')}`}
                 >
                   대시보드
-                </a>
+                </Link>
               </li>
               <li>
-                <a 
-                  href="#" 
-                  className="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors"
-                >
-                  캘린더
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors"
+                <Link 
+                  to="/statistics" 
+                  className={`text-sm transition-colors ${isActive('/statistics')}`}
                 >
                   통계
+                </Link>
+              </li>
+              <li>
+                <a 
+                  href="#" 
+                  className="text-sm text-gray-600 hover:text-teal-600 transition-colors"
+                >
+                  캘린더
                 </a>
               </li>
               <li>
