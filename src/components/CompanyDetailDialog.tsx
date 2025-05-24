@@ -113,6 +113,17 @@ export const CompanyDetailDialog = ({
   };
 
   const formatDate = (dateString: string) => {
+    if (dateString.includes('T')) {
+      // If it includes time, format with both date and time
+      return new Date(dateString).toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+    // Otherwise just format the date
     return new Date(dateString).toLocaleDateString('ko-KR');
   };
 
@@ -137,7 +148,7 @@ export const CompanyDetailDialog = ({
                 {company.deadline && (
                   <span className="text-sm text-gray-500 flex items-center">
                     <Calendar className="w-3 h-3 mr-1" />
-                    마감일: {formatDate(company.deadline)}
+                    마감: {formatDate(company.deadline)}
                   </span>
                 )}
               </div>
@@ -217,10 +228,10 @@ export const CompanyDetailDialog = ({
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="deadline" className="text-gray-700">마감일</Label>
+                <Label htmlFor="deadline" className="text-gray-700">마감일시</Label>
                 <Input
                   id="deadline"
-                  type="date"
+                  type="datetime-local"
                   value={formData.deadline || ""}
                   onChange={(e) => handleInputChange("deadline", e.target.value)}
                   className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"

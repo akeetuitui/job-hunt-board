@@ -45,7 +45,7 @@ export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogPro
     const newCompany: Omit<Company, "id" | "createdAt"> = {
       name: data.name,
       position: data.position,
-      status: data.status || "pending", // Ensure status always has a value
+      status: data.status || "pending",
       deadline: data.deadline || undefined,
       description: data.description || undefined,
       applicationLink: data.applicationLink || undefined
@@ -120,9 +120,14 @@ export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogPro
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="deadline" className="text-right">
-              마감일
+              마감일시
             </Label>
-            <Input type="date" id="deadline" className="col-span-3" {...form.register("deadline")} />
+            <Input 
+              type="datetime-local" 
+              id="deadline" 
+              className="col-span-3" 
+              {...form.register("deadline")} 
+            />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="applicationLink" className="text-right">

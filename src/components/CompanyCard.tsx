@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Company, PositionType } from "@/pages/Index";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -36,6 +35,16 @@ export const CompanyCard = ({
   const [deadline, setDeadline] = useState(company.deadline || "");
 
   const formatDate = (dateString: string) => {
+    if (dateString.includes('T')) {
+      // If it includes time, format with both date and time
+      return new Date(dateString).toLocaleString('ko-KR', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+    // Otherwise just format the date
     return new Date(dateString).toLocaleDateString('ko-KR', {
       month: 'short',
       day: 'numeric'
@@ -142,24 +151,24 @@ export const CompanyCard = ({
                         <Calendar className="w-3 h-3 mr-1" />
                         {isEditingDeadline ? (
                           <Input
-                            type="date"
+                            type="datetime-local"
                             value={deadline}
                             onChange={handleDeadlineChange}
-                            className="h-6 text-xs py-0 px-2 w-28 rounded-md"
+                            className="h-6 text-xs py-0 px-2 w-32 rounded-md"
                             onBlur={saveDeadline}
                             autoFocus
                             onClick={(e) => e.stopPropagation()}
                           />
                         ) : (
                           <span>
-                            {company.deadline ? formatDate(company.deadline) : "마감일 설정"}
+                            {company.deadline ? formatDate(company.deadline) : "마감일시 설정"}
                           </span>
                         )}
                         <Edit2 className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>클릭하여 마감일을 수정하세요</p>
+                      <p>클릭하여 마감일시를 수정하세요</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
