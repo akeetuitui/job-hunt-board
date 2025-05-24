@@ -111,12 +111,35 @@ const Calendar = () => {
                   {format(selectedDate, "yyyy년 M월", { locale: ko })}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2">
                 <CalendarComponent
                   mode="single"
                   selected={selectedDate}
                   onSelect={(date) => date && setSelectedDate(date)}
-                  className="rounded-lg border-0"
+                  className="w-full max-w-none rounded-lg border-0 text-base"
+                  classNames={{
+                    months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
+                    month: "space-y-4 w-full",
+                    caption: "flex justify-center pt-1 relative items-center",
+                    caption_label: "text-lg font-medium",
+                    nav: "space-x-1 flex items-center",
+                    nav_button: "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 border border-gray-200 rounded-md hover:bg-gray-50",
+                    nav_button_previous: "absolute left-3",
+                    nav_button_next: "absolute right-3",
+                    table: "w-full border-collapse space-y-1",
+                    head_row: "flex w-full",
+                    head_cell: "text-gray-500 rounded-md w-full font-medium text-sm py-2",
+                    row: "flex w-full mt-2",
+                    cell: "h-12 w-full text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                    day: "h-12 w-full p-0 font-normal aria-selected:opacity-100 hover:bg-gray-100 rounded-md transition-colors",
+                    day_range_end: "day-range-end",
+                    day_selected: "bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white focus:bg-indigo-600 focus:text-white",
+                    day_today: "bg-gray-100 text-gray-900 font-semibold",
+                    day_outside: "day-outside text-gray-300 opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
+                    day_disabled: "text-gray-300 opacity-50",
+                    day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
+                    day_hidden: "invisible",
+                  }}
                   modifiers={{
                     hasEvents: (date) => hasEvents(date),
                     today: (date) => isToday(date)
