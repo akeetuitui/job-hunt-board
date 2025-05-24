@@ -4,7 +4,7 @@ import { Company } from "@/pages/Index";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MoreVertical, Eye, Trash2, Calendar, Briefcase } from "lucide-react";
+import { MoreVertical, Eye, Trash2, Calendar, Briefcase, Edit2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +14,7 @@ import {
 import { CompanyDetailDialog } from "./CompanyDetailDialog";
 import { cn } from "@/lib/utils";
 import { Input } from "./ui/input";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 interface CompanyCardProps {
   company: Company;
@@ -45,6 +46,8 @@ export const CompanyCard = ({
     const colors = {
       pending: "bg-gray-500",
       applied: "bg-blue-500", 
+      aptitude: "bg-purple-500",
+      assessment: "bg-indigo-500",
       interview: "bg-yellow-500",
       passed: "bg-green-500",
       rejected: "bg-red-500"
@@ -56,6 +59,8 @@ export const CompanyCard = ({
     const texts = {
       pending: "지원예정",
       applied: "지원완료",
+      aptitude: "인적성", 
+      assessment: "역량평가",
       interview: "면접중", 
       passed: "합격",
       rejected: "불합격"
@@ -123,34 +128,40 @@ export const CompanyCard = ({
               {getStatusText(company.status)}
             </Badge>
             
-            <div className="flex items-center text-xs text-gray-500 justify-between">
-              <div className="flex items-center">
-                <Calendar className="w-3 h-3 mr-1" />
-                {formatDate(company.applicationDate)}
-              </div>
-
-              {isEditingDeadline ? (
-                <div className="flex items-center gap-1">
-                  <Input
-                    type="date"
-                    value={deadline}
-                    onChange={handleDeadlineChange}
-                    className="h-6 text-xs py-0 px-2 w-28"
-                    onBlur={saveDeadline}
-                    autoFocus
-                  />
-                </div>
-              ) : (
-                <div 
-                  className="flex items-center cursor-pointer hover:text-teal-600" 
-                  onClick={() => setIsEditingDeadline(true)}
-                >
-                  <span className="text-xs">
-                    {company.deadline ? `마감: ${formatDate(company.deadline)}` : "마감일 추가"}
-                  </span>
-                </div>
-              )}
-            </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center text-xs text-gray-500 justify-between">
+                    {isEditingDeadline ? (
+                      <div className="flex items-center gap-1 w-full">
+                        <Input
+                          type="date"
+                          value={deadline}
+                          onChange={handleDeadlineChange}
+                          className="h-6 text-xs py-0 px-2 w-full"
+                          onBlur={saveDeadline}
+                          autoFocus
+                        />
+                      </div>
+                    ) : (
+                      <div 
+                        className="flex items-center justify-between w-full cursor-pointer group" 
+                        onClick={() => setIsEditingDeadline(true)}
+                      >
+                        <div className="flex items-center">
+                          <Calendar className="w-3 h-3 mr-1" />
+                          {company.deadline ? formatDate(company.deadline) : "마감일 없음"}
+                        </div>
+                        <Edit2 className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    )}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>클릭하여 마감일을 수정하세요</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </CardContent>
       </Card>
