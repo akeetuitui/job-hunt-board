@@ -63,6 +63,8 @@ export const CompanyDetailDialog = ({
     const colors = {
       pending: "bg-gray-500",
       applied: "bg-blue-500",
+      aptitude: "bg-purple-500",
+      assessment: "bg-indigo-500", 
       interview: "bg-yellow-500", 
       passed: "bg-green-500",
       rejected: "bg-red-500"
@@ -74,7 +76,9 @@ export const CompanyDetailDialog = ({
     const texts = {
       pending: "지원예정",
       applied: "지원완료",
-      interview: "면접중",
+      aptitude: "인적성",
+      assessment: "역량평가",
+      interview: "면접중", 
       passed: "합격", 
       rejected: "불합격"
     };
@@ -125,13 +129,9 @@ export const CompanyDetailDialog = ({
                 <Badge className={`text-white text-xs ${getStatusColor(company.status)}`}>
                   {getStatusText(company.status)}
                 </Badge>
-                <span className="text-sm text-gray-500 flex items-center">
-                  <Calendar className="w-3 h-3 mr-1" />
-                  {new Date(company.applicationDate).toLocaleDateString('ko-KR')}
-                </span>
                 {company.deadline && (
                   <span className="text-sm text-gray-500 flex items-center">
-                    <span className="mx-1">•</span>
+                    <Calendar className="w-3 h-3 mr-1" />
                     마감일: {new Date(company.deadline).toLocaleDateString('ko-KR')}
                   </span>
                 )}
@@ -173,7 +173,7 @@ export const CompanyDetailDialog = ({
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="status" className="text-gray-700">지원 상태</Label>
                 <Select 
@@ -186,22 +186,13 @@ export const CompanyDetailDialog = ({
                   <SelectContent className="bg-white">
                     <SelectItem value="pending">지원 예정</SelectItem>
                     <SelectItem value="applied">지원 완료</SelectItem>
+                    <SelectItem value="aptitude">인적성</SelectItem>
+                    <SelectItem value="assessment">역량평가</SelectItem>
                     <SelectItem value="interview">면접 진행</SelectItem>
                     <SelectItem value="passed">최종 합격</SelectItem>
                     <SelectItem value="rejected">불합격</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="applicationDate" className="text-gray-700">지원 날짜</Label>
-                <Input
-                  id="applicationDate"
-                  type="date"
-                  value={formData.applicationDate}
-                  onChange={(e) => handleInputChange("applicationDate", e.target.value)}
-                  className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
-                />
               </div>
               
               <div className="space-y-2">
@@ -333,3 +324,4 @@ export const CompanyDetailDialog = ({
     </Dialog>
   );
 };
+
