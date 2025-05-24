@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Company, PositionType } from "@/pages/Index";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -65,11 +66,6 @@ export const CompanyCard = ({
     return texts[status];
   };
 
-  // Modified to always return light gray for any position type
-  const getPositionTypeBadgeColor = () => {
-    return "bg-gray-100 text-gray-600";
-  };
-
   const handleDeadlineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDeadline(e.target.value);
   };
@@ -85,31 +81,30 @@ export const CompanyCard = ({
         draggable
         onDragStart={onDragStart}
         className={cn(
-          "cursor-move transition-all duration-200 hover:shadow-md border border-gray-100 group hover:border-gray-200",
+          "cursor-move transition-all duration-200 hover:shadow-md border border-gray-100 group hover:border-gray-200 rounded-lg overflow-hidden",
           isDragging && "opacity-50 scale-95"
         )}
       >
-        <CardHeader className="pb-2 px-3 py-2.5">
+        <CardHeader className="pb-2 px-4 py-3 bg-white">
           <div className="flex justify-between items-start">
             <div className="flex-1">
-              <h4 className="font-medium text-gray-900 truncate">{company.name}</h4>
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <p className="text-xs text-gray-600 truncate flex items-center gap-1">
-                  <Briefcase className="w-3 h-3" />
-                  {company.position}
-                </p>
+              <div className="flex items-center gap-2">
+                <h4 className="font-medium text-gray-900 truncate">{company.name}</h4>
                 {company.positionType && (
-                  <Badge variant="outline" className={cn("text-xs px-1.5 py-0 h-4", getPositionTypeBadgeColor())}>
-                    <UserRound className="w-2 h-2 mr-1" />
+                  <span className="text-xs text-gray-500">
                     {company.positionType}
-                  </Badge>
+                  </span>
                 )}
               </div>
+              <p className="text-xs text-gray-600 truncate flex items-center gap-1 mt-1">
+                <Briefcase className="w-3 h-3" />
+                {company.position}
+              </p>
             </div>
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
                   <MoreVertical className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -127,11 +122,11 @@ export const CompanyCard = ({
           </div>
         </CardHeader>
         
-        <CardContent className="px-3 py-2.5 pt-0 space-y-2">
+        <CardContent className="px-4 py-3 pt-0 space-y-2 bg-white">
           <div className="flex justify-between items-center">
             <Badge 
               className={cn(
-                "text-white text-xs py-0.5",
+                "text-white text-xs py-1 px-2 rounded-md font-medium",
                 getStatusColor(company.status)
               )}
             >
@@ -150,7 +145,7 @@ export const CompanyCard = ({
                             type="date"
                             value={deadline}
                             onChange={handleDeadlineChange}
-                            className="h-6 text-xs py-0 px-2 w-28"
+                            className="h-6 text-xs py-0 px-2 w-28 rounded-md"
                             onBlur={saveDeadline}
                             autoFocus
                             onClick={(e) => e.stopPropagation()}

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Company } from "@/pages/Index";
 
@@ -13,32 +14,32 @@ export const useKanbanState = () => {
   const defaultStatusConfig: StatusConfigMap = {
     pending: { 
       title: "지원 예정", 
-      color: "bg-gray-50 border-gray-200", 
+      color: "bg-white border-gray-200", 
       shadow: "ring-gray-200" 
     },
     applied: { 
       title: "지원 완료", 
-      color: "bg-blue-50 border-blue-200", 
+      color: "bg-blue-50/30 border-blue-200", 
       shadow: "ring-blue-200" 
     },
     aptitude: { 
       title: "인적성/역량 검사", 
-      color: "bg-purple-50 border-purple-200", 
+      color: "bg-purple-50/30 border-purple-200", 
       shadow: "ring-purple-200" 
     },
     interview: { 
       title: "면접 진행", 
-      color: "bg-yellow-50 border-yellow-200", 
+      color: "bg-yellow-50/30 border-yellow-200", 
       shadow: "ring-yellow-200" 
     },
     passed: { 
       title: "최종 합격", 
-      color: "bg-green-50 border-green-200", 
+      color: "bg-green-50/30 border-green-200", 
       shadow: "ring-green-200" 
     },
     rejected: { 
       title: "불합격", 
-      color: "bg-red-50 border-red-200", 
+      color: "bg-red-50/30 border-red-200", 
       shadow: "ring-red-200" 
     }
   };
