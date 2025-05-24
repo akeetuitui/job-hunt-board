@@ -96,7 +96,7 @@ const Calendar = () => {
     const dayNumber = date.getDate();
     
     if (dayEvents.length === 0) {
-      return dayNumber;
+      return <span>{dayNumber}</span>;
     }
 
     return (
