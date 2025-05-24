@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Calendar, FileText, Save, Plus, Trash2, Text } from "lucide-react";
+import { Building2, Calendar, FileText, Save, Plus, Trash2, Text, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "./ui/card";
 
@@ -64,7 +64,6 @@ export const CompanyDetailDialog = ({
       pending: "bg-gray-500",
       applied: "bg-blue-500",
       aptitude: "bg-purple-500",
-      assessment: "bg-indigo-500", 
       interview: "bg-yellow-500", 
       passed: "bg-green-500",
       rejected: "bg-red-500"
@@ -76,8 +75,7 @@ export const CompanyDetailDialog = ({
     const texts = {
       pending: "지원예정",
       applied: "지원완료",
-      aptitude: "인적성",
-      assessment: "역량평가",
+      aptitude: "인적성/역량 검사", 
       interview: "면접중", 
       passed: "합격", 
       rejected: "불합격"
@@ -115,6 +113,10 @@ export const CompanyDetailDialog = ({
     }));
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('ko-KR');
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto bg-white">
@@ -129,10 +131,14 @@ export const CompanyDetailDialog = ({
                 <Badge className={`text-white text-xs ${getStatusColor(company.status)}`}>
                   {getStatusText(company.status)}
                 </Badge>
+                <span className="text-sm text-gray-500 flex items-center">
+                  <Clock className="w-3 h-3 mr-1" />
+                  작성일: {formatDate(company.createdAt)}
+                </span>
                 {company.deadline && (
                   <span className="text-sm text-gray-500 flex items-center">
                     <Calendar className="w-3 h-3 mr-1" />
-                    마감일: {new Date(company.deadline).toLocaleDateString('ko-KR')}
+                    마감일: {formatDate(company.deadline)}
                   </span>
                 )}
               </div>
@@ -186,8 +192,7 @@ export const CompanyDetailDialog = ({
                   <SelectContent className="bg-white">
                     <SelectItem value="pending">지원 예정</SelectItem>
                     <SelectItem value="applied">지원 완료</SelectItem>
-                    <SelectItem value="aptitude">인적성</SelectItem>
-                    <SelectItem value="assessment">역량평가</SelectItem>
+                    <SelectItem value="aptitude">인적성/역량 검사</SelectItem>
                     <SelectItem value="interview">면접 진행</SelectItem>
                     <SelectItem value="passed">최종 합격</SelectItem>
                     <SelectItem value="rejected">불합격</SelectItem>
@@ -324,4 +329,3 @@ export const CompanyDetailDialog = ({
     </Dialog>
   );
 };
-

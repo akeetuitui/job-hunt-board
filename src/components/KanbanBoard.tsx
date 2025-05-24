@@ -25,8 +25,7 @@ export const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: Kan
   const defaultStatusConfig: StatusConfigMap = {
     pending: { title: "지원 예정", color: "bg-gray-100 border-gray-200", shadow: "shadow-gray-200" },
     applied: { title: "지원 완료", color: "bg-blue-50 border-blue-200", shadow: "shadow-blue-100" },
-    aptitude: { title: "인적성 검사", color: "bg-purple-50 border-purple-200", shadow: "shadow-purple-100" },
-    assessment: { title: "역량 평가", color: "bg-indigo-50 border-indigo-200", shadow: "shadow-indigo-100" },
+    aptitude: { title: "인적성/역량 검사", color: "bg-purple-50 border-purple-200", shadow: "shadow-purple-100" },
     interview: { title: "면접 진행", color: "bg-yellow-50 border-yellow-200", shadow: "shadow-yellow-100" },
     passed: { title: "최종 합격", color: "bg-green-50 border-green-200", shadow: "shadow-green-100" },
     rejected: { title: "불합격", color: "bg-red-50 border-red-200", shadow: "shadow-red-100" }
@@ -91,7 +90,7 @@ export const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: Kan
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
       {Object.entries(statusConfig).map(([status, config]) => (
         <div
           key={status}
@@ -140,14 +139,26 @@ export const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: Kan
                     {getCompaniesByStatus(status as Company["status"]).length}
                   </span>
                 </h3>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 opacity-70 hover:opacity-100"
-                  onClick={() => handleEditStatus(status)}
-                >
-                  <Edit2 className="h-3.5 w-3.5" />
-                </Button>
+                <div className="flex items-center">
+                  {status === 'pending' && (
+                    <Button 
+                      onClick={() => window.dispatchEvent(new CustomEvent('openAddCompanyDialog'))}
+                      size="icon"
+                      variant="ghost"
+                      className="h-7 w-7 mr-1 opacity-70 hover:opacity-100 hover:bg-gray-200"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 opacity-70 hover:opacity-100"
+                    onClick={() => handleEditStatus(status)}
+                  >
+                    <Edit2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
               </>
             )}
           </div>
@@ -155,8 +166,21 @@ export const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: Kan
           <div className="space-y-3">
             {getCompaniesByStatus(status as Company["status"]).length === 0 && (
               <div className="flex flex-col items-center justify-center h-24 text-center text-gray-400 border border-dashed rounded-md p-4">
-                <AlertCircle className="w-5 h-5 mb-1" />
-                <p className="text-xs">항목을 이 영역으로 드래그하세요</p>
+                {status === 'pending' ? (
+                  <Button
+                    onClick={() => window.dispatchEvent(new CustomEvent('openAddCompanyDialog'))}
+                    variant="ghost"
+                    className="flex flex-col items-center justify-center h-full w-full text-gray-400 hover:text-gray-600 hover:bg-gray-100/50"
+                  >
+                    <Plus className="w-5 h-5 mb-1" />
+                    <p className="text-xs">기업 추가하기</p>
+                  </Button>
+                ) : (
+                  <>
+                    <AlertCircle className="w-5 h-5 mb-1" />
+                    <p className="text-xs">항목을 이 영역으로 드래그하세요</p>
+                  </>
+                )}
               </div>
             )}
             

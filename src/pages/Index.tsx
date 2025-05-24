@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { KanbanBoard } from "@/components/KanbanBoard";
 import { AddCompanyDialog } from "@/components/AddCompanyDialog";
@@ -16,11 +17,12 @@ export interface Company {
   id: string;
   name: string;
   position: string;
-  status: "pending" | "applied" | "aptitude" | "assessment" | "interview" | "passed" | "rejected";
+  status: "pending" | "applied" | "aptitude" | "interview" | "passed" | "rejected";
   deadline?: string;
   description?: string;
   coverLetter?: string;
   coverLetterSections?: CoverLetterSection[];
+  createdAt: string;
 }
 
 const Index = () => {
@@ -45,7 +47,8 @@ const Index = () => {
           content: "프론트엔드 개발에 대한 깊은 이해와 사용자 경험을 중시하는 개발 철학을 가지고 있습니다.",
           maxLength: 500
         }
-      ]
+      ],
+      createdAt: "2023-05-20"
     },
     {
       id: "2", 
@@ -53,23 +56,35 @@ const Index = () => {
       position: "백엔드 개발자",
       status: "aptitude",
       deadline: "2024-06-30",
-      description: "모바일 플랫폼 선도기업"
+      description: "모바일 플랫폼 선도기업",
+      createdAt: "2023-05-21"
     },
     {
       id: "3",
       name: "삼성전자",
       position: "소프트웨어 엔지니어", 
       status: "passed",
-      description: "글로벌 전자기업"
+      description: "글로벌 전자기업",
+      createdAt: "2023-05-22"
     }
   ]);
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  const addCompany = (company: Omit<Company, "id">) => {
+  useEffect(() => {
+    const openAddDialog = () => setIsAddDialogOpen(true);
+    window.addEventListener('openAddCompanyDialog', openAddDialog);
+    
+    return () => {
+      window.removeEventListener('openAddCompanyDialog', openAddDialog);
+    };
+  }, []);
+
+  const addCompany = (company: Omit<Company, "id" | "createdAt">) => {
     const newCompany: Company = {
       ...company,
-      id: Date.now().toString()
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString().split('T')[0]
     };
     setCompanies([...companies, newCompany]);
   };
