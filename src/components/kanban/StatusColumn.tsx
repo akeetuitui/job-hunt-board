@@ -46,9 +46,8 @@ export const StatusColumn = ({
   return (
     <div
       className={cn(
-        "rounded-lg border-2 border-dashed p-4 min-h-[500px] transition-all duration-200",
-        statusConfig.color,
-        isDraggingOver && `border-solid ${statusConfig.shadow} bg-opacity-70`
+        "rounded-xl border border-gray-100 bg-white p-3 min-h-[500px] transition-all duration-200 flex flex-col shadow-sm",
+        isDraggingOver && `ring-2 ${statusConfig.shadow} bg-opacity-70`
       )}
       onDragOver={(e) => onDragOver(e, status)}
       onDragLeave={onDragLeave}
@@ -63,7 +62,7 @@ export const StatusColumn = ({
         isPending={isPending}
       />
       
-      <div className="space-y-3">
+      <div className="space-y-3 flex-1 overflow-y-auto pt-2 pr-1">
         {columnCompanies.length === 0 && (
           <EmptyColumnPlaceholder 
             isPending={isPending} 

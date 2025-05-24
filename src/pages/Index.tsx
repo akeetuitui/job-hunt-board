@@ -112,10 +112,10 @@ const Index = () => {
     <div className="min-h-screen bg-slate-50">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">지원현황 관리</h1>
+      <main className="container mx-auto px-4 py-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+          <div className="animate-fade-in">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">지원현황 관리</h1>
             <p className="text-gray-600">취업 지원 현황을 한눈에 관리하세요</p>
           </div>
           

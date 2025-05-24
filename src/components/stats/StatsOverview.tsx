@@ -40,36 +40,42 @@ export const StatsOverview = ({ companies }: StatsOverviewProps) => {
       value: totalApplications,
       icon: Briefcase,
       color: "text-slate-600",
-      bgColor: "bg-slate-100",
+      bgColor: "bg-slate-50",
+      borderColor: "border-slate-100"
     },
     {
       title: "서류합격률",
       value: `${documentPassRate}%`,
       icon: FileCheck,
-      color: "text-amber-500",
-      bgColor: "bg-amber-50",
+      color: "text-indigo-600",
+      bgColor: "bg-indigo-50",
+      borderColor: "border-indigo-100"
     },
     {
       title: "최종합격률",
       value: `${finalPassRate}%`,
       icon: CheckCircle2,
-      color: "text-teal-600",
-      bgColor: "bg-teal-50",
+      color: "text-emerald-600",
+      bgColor: "bg-emerald-50",
+      borderColor: "border-emerald-100"
     }
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {stats.map((stat) => (
-        <Card key={stat.title} className="border border-gray-100 shadow-sm hover:shadow transition-shadow">
-          <CardContent className="pt-6 px-4 pb-4">
-            <div className="flex justify-between items-start">
+        <Card 
+          key={stat.title} 
+          className={`border ${stat.borderColor} shadow-sm hover:shadow transition-shadow`}
+        >
+          <CardContent className="p-5">
+            <div className="flex justify-between items-center">
               <div>
                 <p className="text-sm font-medium text-gray-500">{stat.title}</p>
                 <h3 className="text-2xl font-bold mt-2">{stat.value}</h3>
               </div>
-              <div className={`p-2.5 rounded-lg ${stat.bgColor}`}>
-                <stat.icon className={`w-5 h-5 ${stat.color}`} />
+              <div className={`p-3 rounded-full ${stat.bgColor}`}>
+                <stat.icon className={`w-6 h-6 ${stat.color}`} />
               </div>
             </div>
           </CardContent>

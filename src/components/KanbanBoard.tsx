@@ -40,7 +40,7 @@ export const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: Kan
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mt-6">
       {statuses.map((status) => (
         <StatusColumn
           key={status}

@@ -44,12 +44,12 @@ export const CompanyCard = ({
 
   const getStatusColor = (status: Company["status"]) => {
     const colors = {
-      pending: "bg-gray-500",
+      pending: "bg-slate-500",
       applied: "bg-blue-500", 
       aptitude: "bg-purple-500",
-      interview: "bg-yellow-500",
-      passed: "bg-green-500",
-      rejected: "bg-red-500"
+      interview: "bg-amber-500",
+      passed: "bg-emerald-500",
+      rejected: "bg-rose-500"
     };
     return colors[status];
   };
@@ -92,21 +92,21 @@ export const CompanyCard = ({
         draggable
         onDragStart={onDragStart}
         className={cn(
-          "cursor-move transition-all duration-200 hover:shadow-md",
+          "cursor-move transition-all duration-200 hover:shadow-md border border-gray-100 group hover:border-gray-200",
           isDragging && "opacity-50 scale-95"
         )}
       >
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-2 px-3 py-2.5">
           <div className="flex justify-between items-start">
             <div className="flex-1">
-              <h4 className="font-semibold text-gray-900 truncate">{company.name}</h4>
+              <h4 className="font-medium text-gray-900 truncate">{company.name}</h4>
               <div className="flex items-center gap-1.5 flex-wrap">
-                <p className="text-sm text-gray-600 truncate flex items-center gap-1">
+                <p className="text-xs text-gray-600 truncate flex items-center gap-1">
                   <Briefcase className="w-3 h-3" />
                   {company.position}
                 </p>
                 {company.positionType && (
-                  <Badge variant="outline" className={cn("text-xs px-1.5 py-0.5 h-auto", getPositionTypeBadgeColor(company.positionType))}>
+                  <Badge variant="outline" className={cn("text-xs px-1.5 py-0 h-4", getPositionTypeBadgeColor(company.positionType))}>
                     <UserRound className="w-2 h-2 mr-1" />
                     {company.positionType}
                   </Badge>
@@ -116,7 +116,7 @@ export const CompanyCard = ({
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
                   <MoreVertical className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -125,7 +125,7 @@ export const CompanyCard = ({
                   <Eye className="w-4 h-4 mr-2" />
                   상세보기
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDelete(company.id)}>
+                <DropdownMenuItem onClick={() => onDelete(company.id)} className="text-red-600 focus:text-red-600">
                   <Trash2 className="w-4 h-4 mr-2" />
                   삭제
                 </DropdownMenuItem>
@@ -134,11 +134,11 @@ export const CompanyCard = ({
           </div>
         </CardHeader>
         
-        <CardContent>
-          <div className="space-y-2">
+        <CardContent className="px-3 py-2.5 pt-0 space-y-2">
+          <div className="flex justify-between items-center">
             <Badge 
               className={cn(
-                "text-white text-xs",
+                "text-white text-xs py-0.5",
                 getStatusColor(company.status)
               )}
             >
@@ -157,7 +157,7 @@ export const CompanyCard = ({
                             type="date"
                             value={deadline}
                             onChange={handleDeadlineChange}
-                            className="h-6 text-xs py-0 px-2 w-32"
+                            className="h-6 text-xs py-0 px-2 w-28"
                             onBlur={saveDeadline}
                             autoFocus
                             onClick={(e) => e.stopPropagation()}
