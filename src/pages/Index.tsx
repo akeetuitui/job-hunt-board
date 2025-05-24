@@ -6,6 +6,7 @@ import { AddCompanyDialog } from "@/components/AddCompanyDialog";
 import { Button } from "@/components/ui/button";
 import { Plus, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useCompanies } from "@/hooks/useCompanies";
 import { useNavigate } from "react-router-dom";
 
 export interface CoverLetterSection {
@@ -34,8 +35,15 @@ export interface Company {
 const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const [companies, setCompanies] = useState<Company[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  
+  const {
+    companies,
+    isLoading: isLoadingCompanies,
+    addCompany,
+    updateCompany,
+    deleteCompany,
+  } = useCompanies();
 
   // Redirect to auth page if not logged in
   useEffect(() => {
@@ -53,8 +61,8 @@ const Index = () => {
     };
   }, []);
 
-  // Show loading spinner while checking auth
-  if (loading) {
+  // Show loading spinner while checking auth or loading companies
+  if (loading || isLoadingCompanies) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
@@ -70,23 +78,16 @@ const Index = () => {
     return null;
   }
 
-  const addCompany = (company: Omit<Company, "id" | "createdAt">) => {
-    const newCompany: Company = {
-      ...company,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString().split('T')[0]
-    };
-    setCompanies([...companies, newCompany]);
+  const handleAddCompany = (company: Omit<Company, "id" | "createdAt">) => {
+    addCompany(company);
   };
 
-  const updateCompany = (updatedCompany: Company) => {
-    setCompanies(companies.map(company => 
-      company.id === updatedCompany.id ? updatedCompany : company
-    ));
+  const handleUpdateCompany = (updatedCompany: Company) => {
+    updateCompany(updatedCompany);
   };
 
-  const deleteCompany = (id: string) => {
-    setCompanies(companies.filter(company => company.id !== id));
+  const handleDeleteCompany = (id: string) => {
+    deleteCompany(id);
   };
 
   return (
@@ -111,14 +112,14 @@ const Index = () => {
 
         <KanbanBoard 
           companies={companies}
-          onUpdateCompany={updateCompany}
-          onDeleteCompany={deleteCompany}
+          onUpdateCompany={handleUpdateCompany}
+          onDeleteCompany={handleDeleteCompany}
         />
 
         <AddCompanyDialog
           isOpen={isAddDialogOpen}
           onClose={() => setIsAddDialogOpen(false)}
-          onAdd={addCompany}
+          onAdd={handleAddCompany}
         />
       </main>
     </div>
