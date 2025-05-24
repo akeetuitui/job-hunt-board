@@ -23,7 +23,16 @@ interface AddCompanyDialogProps {
 
 export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogProps) => {
   const [open, setOpen] = useState(isOpen);
-  const form = useForm();
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      position: "",
+      status: "pending",
+      deadline: "",
+      description: "",
+      applicationLink: ""
+    }
+  });
   
   // Sync the open state with the isOpen prop
   useEffect(() => {
@@ -31,19 +40,29 @@ export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogPro
   }, [isOpen]);
 
   const onSubmit = (data: any) => {
+    console.log('Form data before submission:', data);
+    
     const newCompany: Omit<Company, "id" | "createdAt"> = {
       name: data.name,
       position: data.position,
-      status: data.status as Company["status"],
+      status: data.status || "pending", // Ensure status always has a value
       deadline: data.deadline || undefined,
       description: data.description || undefined,
       applicationLink: data.applicationLink || undefined
     };
     
+    console.log('Company object to be added:', newCompany);
     onAdd(newCompany);
     setOpen(false);
-    onClose(); // Make sure to call the onClose prop
-    form.reset();
+    onClose();
+    form.reset({
+      name: "",
+      position: "",
+      status: "pending",
+      deadline: "",
+      description: "",
+      applicationLink: ""
+    });
   };
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -79,7 +98,13 @@ export const AddCompanyDialog = ({ isOpen, onClose, onAdd }: AddCompanyDialogPro
             <Label htmlFor="status" className="text-right">
               지원 상태
             </Label>
-            <Select onValueChange={(value) => form.setValue("status", value)} defaultValue="pending">
+            <Select 
+              onValueChange={(value) => {
+                console.log('Status changed to:', value);
+                form.setValue("status", value);
+              }} 
+              defaultValue="pending"
+            >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="상태 선택" />
               </SelectTrigger>
