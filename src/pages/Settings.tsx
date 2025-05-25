@@ -1,19 +1,27 @@
+
 import Header from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Bell, Download, Trash2, Globe, Palette, Shield } from "lucide-react";
+import { Bell, Download, Trash2, Shield } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
+import { useSettings } from "@/hooks/useSettings";
+import { useAuth } from "@/hooks/useAuth";
+import { useCompanies } from "@/hooks/useCompanies";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
   const { toast } = useToast();
-  const { profile, loading, updateProfile } = useProfile();
+  const { user, loading: authLoading } = useAuth();
+  const { profile, loading: profileLoading, updateProfile } = useProfile();
+  const { settings, loading: settingsLoading, updateNotifications, updatePreferences } = useSettings();
+  const { companies } = useCompanies();
+  const navigate = useNavigate();
   
   const [profileForm, setProfileForm] = useState({
     full_name: "",
@@ -21,35 +29,13 @@ const Settings = () => {
     university: "",
     major: ""
   });
-  
-  const [notifications, setNotifications] = useState({
-    emailNotifications: true,
-    interviewReminders: true,
-    applicationDeadlines: true,
-    soundEnabled: true
-  });
 
-  const [preferences, setPreferences] = useState({
-    language: "ko",
-    theme: "system",
-    autoSave: true,
-    compactView: false
-  });
-
+  // 로그인하지 않은 사용자 리다이렉트
   useEffect(() => {
-    // 로컬 스토리지에서 알림 설정 불러오기
-    const savedNotifications = localStorage.getItem('jobtracker-notifications');
-    if (savedNotifications) {
-      const parsed = JSON.parse(savedNotifications);
-      setNotifications(parsed);
+    if (!authLoading && !user) {
+      navigate('/auth');
     }
-    
-    // 로컬 스토리지에서 환경설정 불러오기
-    const savedPreferences = localStorage.getItem('jobtracker-preferences');
-    if (savedPreferences) {
-      setPreferences(JSON.parse(savedPreferences));
-    }
-  }, []);
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
     if (profile) {
@@ -68,29 +54,40 @@ const Settings = () => {
       university: profileForm.university,
       major: profileForm.major
     });
+
+    if (success) {
+      toast({
+        title: "프로필 저장됨",
+        description: "프로필 정보가 성공적으로 저장되었습니다.",
+      });
+    }
   };
 
-  const handleNotificationsSave = () => {
-    localStorage.setItem('jobtracker-notifications', JSON.stringify(notifications));
-    toast({
-      title: "알림 설정 저장됨",
-      description: "알림 설정이 성공적으로 저장되었습니다.",
-    });
+  const handleNotificationsSave = async () => {
+    const success = await updateNotifications(settings.notifications);
+    if (success) {
+      toast({
+        title: "알림 설정 저장됨",
+        description: "알림 설정이 성공적으로 저장되었습니다.",
+      });
+    }
   };
 
-  const handlePreferencesSave = () => {
-    localStorage.setItem('jobtracker-preferences', JSON.stringify(preferences));
-    toast({
-      title: "환경설정 저장됨",
-      description: "환경설정이 성공적으로 저장되었습니다.",
-    });
+  const handlePreferencesSave = async () => {
+    const success = await updatePreferences(settings.preferences);
+    if (success) {
+      toast({
+        title: "환경설정 저장됨",
+        description: "환경설정이 성공적으로 저장되었습니다.",
+      });
+    }
   };
 
   const handleDataExport = () => {
     const data = {
       profile: profileForm,
-      notifications,
-      preferences,
+      settings: settings,
+      companies: companies,
       exportDate: new Date().toISOString()
     };
     
@@ -106,23 +103,24 @@ const Settings = () => {
 
     toast({
       title: "데이터 내보내기 완료",
-      description: "데이터가 JSON 파일로 다운로드되었습니다.",
+      description: "모든 데이터가 JSON 파일로 다운로드되었습니다.",
     });
   };
 
   const handleDataClear = () => {
-    localStorage.removeItem('jobtracker-notifications');
-    localStorage.removeItem('jobtracker-preferences');
-    localStorage.removeItem('jobtracker-applications');
-    
-    toast({
-      title: "데이터 삭제 완료",
-      description: "모든 로컬 데이터가 삭제되었습니다.",
-      variant: "destructive",
-    });
+    if (window.confirm('정말로 모든 로컬 캐시 데이터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+      // 로컬 스토리지만 삭제 (Supabase 데이터는 유지)
+      localStorage.clear();
+      
+      toast({
+        title: "로컬 캐시 삭제 완료",
+        description: "브라우저의 로컬 캐시가 삭제되었습니다. 페이지를 새로고침하세요.",
+        variant: "destructive",
+      });
+    }
   };
 
-  if (loading) {
+  if (authLoading || profileLoading || settingsLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
@@ -131,6 +129,10 @@ const Settings = () => {
         </div>
       </div>
     );
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (
@@ -219,9 +221,9 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">중요한 업데이트를 이메일로 받습니다</p>
                 </div>
                 <Switch
-                  checked={notifications.emailNotifications}
+                  checked={settings.notifications.emailNotifications}
                   onCheckedChange={(checked) => 
-                    setNotifications({...notifications, emailNotifications: checked})
+                    updateNotifications({...settings.notifications, emailNotifications: checked})
                   }
                 />
               </div>
@@ -232,9 +234,9 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">면접 하루 전 알림을 받습니다</p>
                 </div>
                 <Switch
-                  checked={notifications.interviewReminders}
+                  checked={settings.notifications.interviewReminders}
                   onCheckedChange={(checked) => 
-                    setNotifications({...notifications, interviewReminders: checked})
+                    updateNotifications({...settings.notifications, interviewReminders: checked})
                   }
                 />
               </div>
@@ -245,9 +247,9 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">지원 마감 3일 전 알림을 받습니다</p>
                 </div>
                 <Switch
-                  checked={notifications.applicationDeadlines}
+                  checked={settings.notifications.applicationDeadlines}
                   onCheckedChange={(checked) => 
-                    setNotifications({...notifications, applicationDeadlines: checked})
+                    updateNotifications({...settings.notifications, applicationDeadlines: checked})
                   }
                 />
               </div>
@@ -258,9 +260,9 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">알림과 함께 사운드를 재생합니다</p>
                 </div>
                 <Switch
-                  checked={notifications.soundEnabled}
+                  checked={settings.notifications.soundEnabled}
                   onCheckedChange={(checked) => 
-                    setNotifications({...notifications, soundEnabled: checked})
+                    updateNotifications({...settings.notifications, soundEnabled: checked})
                   }
                 />
               </div>
@@ -273,7 +275,7 @@ const Settings = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Palette className="w-5 h-5" />
+                <Shield className="w-5 h-5" />
                 환경 설정
               </CardTitle>
               <CardDescription>
@@ -284,9 +286,12 @@ const Settings = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="language">언어</Label>
-                  <Select value={preferences.language} onValueChange={(value) => 
-                    setPreferences({...preferences, language: value})
-                  }>
+                  <Select 
+                    value={settings.preferences.language} 
+                    onValueChange={(value) => 
+                      updatePreferences({...settings.preferences, language: value})
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -299,9 +304,12 @@ const Settings = () => {
                 
                 <div className="space-y-2">
                   <Label htmlFor="theme">테마</Label>
-                  <Select value={preferences.theme} onValueChange={(value) => 
-                    setPreferences({...preferences, theme: value})
-                  }>
+                  <Select 
+                    value={settings.preferences.theme} 
+                    onValueChange={(value) => 
+                      updatePreferences({...settings.preferences, theme: value})
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -320,9 +328,9 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">변경사항을 자동으로 저장합니다</p>
                 </div>
                 <Switch
-                  checked={preferences.autoSave}
+                  checked={settings.preferences.autoSave}
                   onCheckedChange={(checked) => 
-                    setPreferences({...preferences, autoSave: checked})
+                    updatePreferences({...settings.preferences, autoSave: checked})
                   }
                 />
               </div>
@@ -333,9 +341,9 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">더 많은 정보를 한 화면에 표시합니다</p>
                 </div>
                 <Switch
-                  checked={preferences.compactView}
+                  checked={settings.preferences.compactView}
                   onCheckedChange={(checked) => 
-                    setPreferences({...preferences, compactView: checked})
+                    updatePreferences({...settings.preferences, compactView: checked})
                   }
                 />
               </div>
@@ -348,11 +356,11 @@ const Settings = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Globe className="w-5 h-5" />
+                <Download className="w-5 h-5" />
                 데이터 관리
               </CardTitle>
               <CardDescription>
-                데이터를 백업하거나 초기화하세요
+                데이터를 백업하거나 로컬 캐시를 삭제하세요
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -367,15 +375,16 @@ const Settings = () => {
                   className="sm:ml-auto flex items-center gap-2"
                 >
                   <Trash2 className="w-4 h-4" />
-                  모든 데이터 삭제
+                  로컬 캐시 삭제
                 </Button>
               </div>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-medium text-blue-900 mb-2">웹 브라우저 저장소 사용</h4>
-                <p className="text-sm text-blue-800">
-                  • 데이터는 브라우저의 로컬 스토리지에 저장됩니다<br/>
-                  • 브라우저 데이터를 삭제하면 모든 정보가 사라집니다<br/>
-                  • 정기적으로 데이터를 내보내서 백업하세요
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-medium text-green-900 mb-2">클라우드 저장소 사용</h4>
+                <p className="text-sm text-green-800">
+                  • 모든 중요한 데이터는 클라우드에 안전하게 저장됩니다<br/>
+                  • 여러 기기에서 동일한 정보에 접근할 수 있습니다<br/>
+                  • 브라우저를 바꿔도 데이터가 유지됩니다<br/>
+                  • 로컬 캐시 삭제는 임시 파일만 제거하며, 중요 데이터는 보존됩니다
                 </p>
               </div>
             </CardContent>
