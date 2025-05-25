@@ -1,10 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Company } from "@/pages/Index";
 import { StatsOverview } from "@/components/stats/StatsOverview";
 import { ApplicationStagesChart } from "@/components/stats/ApplicationStagesChart";
-import { SuccessRateChart } from "@/components/stats/SuccessRateChart";
 import { TimelineChart } from "@/components/stats/TimelineChart";
 
 const Statistics = () => {
@@ -106,23 +104,14 @@ const Statistics = () => {
             <StatsOverview companies={companies} />
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in" style={{ animationDelay: "0.2s" }}>
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">단계별 지원현황</h2>
-              <div className="h-[280px]">
-                <ApplicationStagesChart companies={companies} />
-              </div>
-            </div>
-            
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in" style={{ animationDelay: "0.3s" }}>
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">지원 성공률</h2>
-              <div className="h-[280px]">
-                <SuccessRateChart companies={companies} />
-              </div>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">단계별 지원현황</h2>
+            <div className="h-[280px]">
+              <ApplicationStagesChart companies={companies} />
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in" style={{ animationDelay: "0.3s" }}>
             <h2 className="text-xl font-semibold mb-4 text-gray-800">지원 타임라인</h2>
             <div className="h-[380px]">
               <TimelineChart companies={companies} />

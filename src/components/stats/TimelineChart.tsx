@@ -1,4 +1,3 @@
-
 import { useMemo, useState } from "react";
 import { Company } from "@/pages/Index";
 import { ChartContainer } from "@/components/ui/chart";
@@ -19,7 +18,7 @@ interface TimelineChartProps {
 }
 
 export const TimelineChart = ({ companies }: TimelineChartProps) => {
-  const [viewType, setViewType] = useState<'monthly' | 'weekly'>('monthly');
+  const [viewType, setViewType] = useState<'monthly' | 'weekly'>('weekly');
 
   // Process data to create timeline
   const chartData = useMemo(() => {
@@ -30,7 +29,7 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
     // Create a map of dates and counts
     const dateMap = new Map();
     
-    // Group by month/week and year
+    // Group by month/8-week period and year
     companies.forEach(company => {
       const date = new Date(company.createdAt);
       let dateKey: string;
@@ -38,12 +37,11 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
       if (viewType === 'monthly') {
         dateKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
       } else {
-        // Weekly view - get the start of the week (Monday)
-        const startOfWeek = new Date(date);
-        const day = startOfWeek.getDay();
-        const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
-        startOfWeek.setDate(diff);
-        dateKey = `${startOfWeek.getFullYear()}-${(startOfWeek.getMonth() + 1).toString().padStart(2, '0')}-${startOfWeek.getDate().toString().padStart(2, '0')}`;
+        // Weekly view - group by 8-week periods
+        const startOfYear = new Date(date.getFullYear(), 0, 1);
+        const weekNumber = Math.ceil(((date.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24) + startOfYear.getDay() + 1) / 7);
+        const periodNumber = Math.ceil(weekNumber / 8);
+        dateKey = `${date.getFullYear()}-P${periodNumber}`;
       }
       
       if (!dateMap.has(dateKey)) {
@@ -105,8 +103,8 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
         const [year, month] = entry.date.split('-');
         entry.displayDate = `${year}.${month}`;
       } else {
-        const [year, month, day] = entry.date.split('-');
-        entry.displayDate = `${month}/${day}`;
+        const [year, period] = entry.date.split('-P');
+        entry.displayDate = `${year} ${period}기`;
       }
       
       return entry;
@@ -147,7 +145,7 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
           size="sm"
           onClick={() => setViewType('weekly')}
         >
-          주별
+          8주별
         </Button>
       </div>
       
