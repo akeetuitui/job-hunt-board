@@ -117,8 +117,8 @@ const DemoKanbanBoard = () => {
           ))}
           
           <Button 
-            variant="dashed" 
-            className="w-full py-8 border-2 border-dashed border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-600"
+            variant="outline" 
+            className="w-full py-8 border-2 border-dashed border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-600 bg-transparent"
             onClick={() => handleDemoAction("회사 추가")}
           >
             <Plus className="w-4 h-4 mr-2" />
