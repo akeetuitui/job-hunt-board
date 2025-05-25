@@ -115,11 +115,11 @@ export const useSettings = () => {
     try {
       const { error } = await supabase
         .from('user_settings')
-        .insert([{
+        .insert({
           user_id: user.id,
-          notifications: defaultSettings.notifications,
-          preferences: defaultSettings.preferences
-        }]);
+          notifications: defaultSettings.notifications as any,
+          preferences: defaultSettings.preferences as any
+        });
 
       if (error && error.code !== '23505') { // 중복 키 오류가 아닌 경우만 로그
         console.error('초기 설정 생성 오류:', error);
@@ -138,11 +138,11 @@ export const useSettings = () => {
     try {
       const { error } = await supabase
         .from('user_settings')
-        .upsert([{
+        .upsert({
           user_id: user.id,
-          notifications: notifications,
-          preferences: settings.preferences
-        }]);
+          notifications: notifications as any,
+          preferences: settings.preferences as any
+        });
 
       if (error) {
         console.error('알림 설정 업데이트 오류:', error);
@@ -174,11 +174,11 @@ export const useSettings = () => {
     try {
       const { error } = await supabase
         .from('user_settings')
-        .upsert([{
+        .upsert({
           user_id: user.id,
-          notifications: settings.notifications,
-          preferences: preferences
-        }]);
+          notifications: settings.notifications as any,
+          preferences: preferences as any
+        });
 
       if (error) {
         console.error('환경설정 업데이트 오류:', error);
