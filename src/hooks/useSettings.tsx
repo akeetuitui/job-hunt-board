@@ -23,6 +23,21 @@ export interface UserSettings {
   preferences: UserPreferences;
 }
 
+// Types for Supabase Json fields
+interface NotificationData {
+  emailNotifications?: boolean;
+  interviewReminders?: boolean;
+  applicationDeadlines?: boolean;
+  soundEnabled?: boolean;
+}
+
+interface PreferenceData {
+  language?: string;
+  theme?: string;
+  autoSave?: boolean;
+  compactView?: boolean;
+}
+
 const defaultSettings: UserSettings = {
   notifications: {
     emailNotifications: true,
@@ -63,8 +78,8 @@ export const useSettings = () => {
         setSettings(defaultSettings);
       } else if (data) {
         // Json 타입을 안전하게 캐스팅
-        const notificationsData = data.notifications as any;
-        const preferencesData = data.preferences as any;
+        const notificationsData = data.notifications as NotificationData;
+        const preferencesData = data.preferences as PreferenceData;
         
         const notifications: NotificationSettings = {
           emailNotifications: notificationsData?.emailNotifications ?? defaultSettings.notifications.emailNotifications,
