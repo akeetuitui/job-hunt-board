@@ -54,57 +54,46 @@ const ProfileSetupDialog = ({ open, onClose }: ProfileSetupDialogProps) => {
     setLoading(false);
   };
 
-  const handleSkip = () => {
-    onClose();
-  };
-
   return (
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle className="text-center">프로필 설정</DialogTitle>
+          <DialogTitle className="text-center">프로필 설정 (필수)</DialogTitle>
           <DialogDescription className="text-center">
-            JobTracker를 더 잘 활용할 수 있도록 기본 정보를 입력해주세요.
+            JobTracker를 사용하기 위해서는 기본 정보 입력이 필요합니다.
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="university">대학교</Label>
+            <Label htmlFor="university">대학교 *</Label>
             <Input
               id="university"
               value={university}
               onChange={(e) => setUniversity(e.target.value)}
               placeholder="예: 서울대학교"
               disabled={loading}
+              required
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="major">학과</Label>
+            <Label htmlFor="major">학과 *</Label>
             <Input
               id="major"
               value={major}
               onChange={(e) => setMajor(e.target.value)}
               placeholder="예: 컴퓨터공학과"
               disabled={loading}
+              required
             />
           </div>
           
-          <div className="flex gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleSkip}
-              disabled={loading}
-              className="flex-1"
-            >
-              나중에 설정
-            </Button>
+          <div className="pt-4">
             <Button
               type="submit"
-              disabled={loading}
-              className="flex-1"
+              disabled={loading || !university.trim() || !major.trim()}
+              className="w-full"
             >
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               완료
