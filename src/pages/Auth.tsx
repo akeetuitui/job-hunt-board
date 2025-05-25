@@ -77,10 +77,10 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!email || !password || !fullName) {
       toast({
         title: "오류",
-        description: "이메일과 비밀번호를 입력해주세요.",
+        description: "이메일, 비밀번호, 이름을 모두 입력해주세요.",
         variant: "destructive",
       });
       return;
@@ -92,7 +92,7 @@ const Auth = () => {
       password,
       options: {
         data: {
-          full_name: fullName || email.split('@')[0],
+          full_name: fullName,
         }
       }
     });
@@ -245,7 +245,7 @@ const Auth = () => {
                   <div className="space-y-2">
                     <Label htmlFor="signup-name" className="flex items-center">
                       <User className="w-4 h-4 mr-2" />
-                      이름 (선택사항)
+                      이름 <span className="text-red-500 ml-1">*</span>
                     </Label>
                     <Input
                       id="signup-name"
@@ -253,6 +253,7 @@ const Auth = () => {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="홍길동"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
