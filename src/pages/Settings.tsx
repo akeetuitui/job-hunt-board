@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Bell, Download, UserX, Shield } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
-import { useSettings } from "@/hooks/useSettings";
+import { useSettings, type NotificationSettings } from "@/hooks/useSettings";
 import { useAuth } from "@/hooks/useAuth";
 import { useCompanies } from "@/hooks/useCompanies";
 import { useNavigate } from "react-router-dom";
@@ -62,10 +62,10 @@ const Settings = () => {
     }
   };
 
-  const handleNotificationChange = (key: string, value: boolean) => {
+  const handleNotificationChange = (key: keyof NotificationSettings, value: boolean) => {
     if (!settings?.notifications) return;
     
-    const updatedNotifications = { ...settings.notifications, [key]: value };
+    const updatedNotifications: NotificationSettings = { ...settings.notifications, [key]: value };
     updateNotifications(updatedNotifications);
   };
 

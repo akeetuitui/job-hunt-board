@@ -4,21 +4,21 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
-interface NotificationSettings {
+export interface NotificationSettings {
   emailNotifications: boolean;
   interviewReminders: boolean;
   applicationDeadlines: boolean;
   soundEnabled: boolean;
 }
 
-interface UserPreferences {
+export interface UserPreferences {
   language: string;
   theme: string;
   autoSave: boolean;
   compactView: boolean;
 }
 
-interface UserSettings {
+export interface UserSettings {
   notifications: NotificationSettings;
   preferences: UserPreferences;
 }
@@ -62,14 +62,22 @@ export const useSettings = () => {
         console.error('설정 로드 오류:', error);
         setSettings(defaultSettings);
       } else if (data) {
-        // 안전한 타입 변환
-        const notifications = data.notifications as unknown as NotificationSettings;
-        const preferences = data.preferences as unknown as UserPreferences;
+        // 타입 안전한 변환
+        const notifications: NotificationSettings = {
+          emailNotifications: data.notifications?.emailNotifications ?? defaultSettings.notifications.emailNotifications,
+          interviewReminders: data.notifications?.interviewReminders ?? defaultSettings.notifications.interviewReminders,
+          applicationDeadlines: data.notifications?.applicationDeadlines ?? defaultSettings.notifications.applicationDeadlines,
+          soundEnabled: data.notifications?.soundEnabled ?? defaultSettings.notifications.soundEnabled
+        };
         
-        setSettings({
-          notifications: { ...defaultSettings.notifications, ...notifications },
-          preferences: { ...defaultSettings.preferences, ...preferences }
-        });
+        const preferences: UserPreferences = {
+          language: data.preferences?.language ?? defaultSettings.preferences.language,
+          theme: data.preferences?.theme ?? defaultSettings.preferences.theme,
+          autoSave: data.preferences?.autoSave ?? defaultSettings.preferences.autoSave,
+          compactView: data.preferences?.compactView ?? defaultSettings.preferences.compactView
+        };
+        
+        setSettings({ notifications, preferences });
       } else {
         // 설정이 없으면 기본 설정으로 새로 생성
         await createInitialSettings();
@@ -91,8 +99,8 @@ export const useSettings = () => {
         .from('user_settings')
         .insert({
           user_id: user.id,
-          notifications: defaultSettings.notifications as any,
-          preferences: defaultSettings.preferences as any
+          notifications: defaultSettings.notifications,
+          preferences: defaultSettings.preferences
         });
 
       if (error && error.code !== '23505') { // 중복 키 오류가 아닌 경우만 로그
@@ -106,7 +114,7 @@ export const useSettings = () => {
   };
 
   // 알림 설정 업데이트
-  const updateNotifications = async (notifications: NotificationSettings) => {
+  const updateNotifications = async (notifications: NotificationSettings): Promise<boolean> => {
     if (!user) return false;
 
     try {
@@ -114,8 +122,8 @@ export const useSettings = () => {
         .from('user_settings')
         .upsert({
           user_id: user.id,
-          notifications: notifications as any,
-          preferences: settings.preferences as any
+          notifications: notifications,
+          preferences: settings.preferences
         });
 
       if (error) {
@@ -142,7 +150,7 @@ export const useSettings = () => {
   };
 
   // 환경설정 업데이트
-  const updatePreferences = async (preferences: UserPreferences) => {
+  const updatePreferences = async (preferences: UserPreferences): Promise<boolean> => {
     if (!user) return false;
 
     try {
@@ -150,8 +158,8 @@ export const useSettings = () => {
         .from('user_settings')
         .upsert({
           user_id: user.id,
-          notifications: settings.notifications as any,
-          preferences: preferences as any
+          notifications: settings.notifications,
+          preferences: preferences
         });
 
       if (error) {
