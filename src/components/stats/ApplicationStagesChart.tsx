@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Company } from "@/pages/Index";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Cell } from "recharts";
 import { Button } from "@/components/ui/button";
 
 interface ApplicationStagesChartProps {
@@ -36,6 +36,26 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
     };
   });
 
+  // Custom label component to show values on top of bars
+  const renderCustomLabel = (props: any) => {
+    const { x, y, width, value, payload } = props;
+    const displayValue = viewType === 'percentage' ? `${payload.percentage}%` : payload.count;
+    const centerX = x + width / 2;
+    
+    return (
+      <text 
+        x={centerX} 
+        y={y - 5} 
+        fill="#374151" 
+        textAnchor="middle" 
+        fontSize="11" 
+        fontWeight="500"
+      >
+        {displayValue}
+      </text>
+    );
+  };
+
   return (
     <div className="w-full h-full flex flex-col">
       <div className="flex justify-end mb-3">
@@ -67,7 +87,7 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
           className="w-full h-full"
         >
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={statusCounts} margin={{ top: 5, right: 0, left: -20, bottom: 5 }}>
+            <BarChart data={statusCounts} margin={{ top: 25, right: 0, left: -20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
               <XAxis 
                 dataKey="name" 
@@ -104,6 +124,7 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
                 fill="#14b8a6"
                 fillOpacity={0.9}
                 barSize={26}
+                label={renderCustomLabel}
               />
             </BarChart>
           </ResponsiveContainer>
