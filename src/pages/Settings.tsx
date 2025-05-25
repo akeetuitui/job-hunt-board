@@ -8,12 +8,13 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Bell, Download, Trash2, Shield } from "lucide-react";
+import { Bell, Download, UserX, Shield } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useSettings } from "@/hooks/useSettings";
 import { useAuth } from "@/hooks/useAuth";
 import { useCompanies } from "@/hooks/useCompanies";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const Settings = () => {
   const { toast } = useToast();
@@ -107,14 +108,61 @@ const Settings = () => {
     });
   };
 
-  const handleDataClear = () => {
-    if (window.confirm('정말로 모든 로컬 캐시 데이터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-      // 로컬 스토리지만 삭제 (Supabase 데이터는 유지)
-      localStorage.clear();
+  const handleAccountDeletion = async () => {
+    const confirmMessage = `정말로 계정을 탈퇴하시겠습니까?
+
+이 작업을 수행하면:
+• 모든 지원 회사 정보가 삭제됩니다
+• 프로필 정보가 삭제됩니다  
+• 설정이 삭제됩니다
+• 이 작업은 되돌릴 수 없습니다
+
+계속하려면 "계정삭제"를 정확히 입력해주세요.`;
+
+    const userInput = prompt(confirmMessage);
+    
+    if (userInput !== "계정삭제") {
+      if (userInput !== null) { // 사용자가 취소하지 않았다면
+        toast({
+          title: "탈퇴 취소됨",
+          description: "정확한 확인 문구를 입력하지 않아 탈퇴가 취소되었습니다.",
+        });
+      }
+      return;
+    }
+
+    if (!user) return;
+
+    try {
+      // Supabase에서 사용자 데이터 삭제 (관련 테이블들은 CASCADE로 자동 삭제됨)
+      const { error } = await supabase.rpc('delete_user_account');
+      
+      if (error) {
+        console.error('계정 삭제 오류:', error);
+        toast({
+          title: "계정 삭제 실패",
+          description: "계정 삭제 중 오류가 발생했습니다. 고객지원에 문의해주세요.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // 계정 삭제 후 로그아웃
+      await supabase.auth.signOut();
       
       toast({
-        title: "로컬 캐시 삭제 완료",
-        description: "브라우저의 로컬 캐시가 삭제되었습니다. 페이지를 새로고침하세요.",
+        title: "계정이 삭제되었습니다",
+        description: "지금까지 JobTracker를 이용해주셔서 감사합니다.",
+      });
+
+      // 로그인 페이지로 리다이렉트
+      navigate('/auth');
+      
+    } catch (error) {
+      console.error('계정 삭제 중 예외 발생:', error);
+      toast({
+        title: "계정 삭제 실패",
+        description: "계정 삭제 중 오류가 발생했습니다. 다시 시도해주세요.",
         variant: "destructive",
       });
     }
@@ -360,7 +408,7 @@ const Settings = () => {
                 데이터 관리
               </CardTitle>
               <CardDescription>
-                데이터를 백업하거나 로컬 캐시를 삭제하세요
+                데이터를 백업하거나 계정을 관리하세요
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -370,21 +418,28 @@ const Settings = () => {
                   데이터 내보내기
                 </Button>
                 <Button 
-                  onClick={handleDataClear} 
+                  onClick={handleAccountDeletion} 
                   variant="destructive"
                   className="sm:ml-auto flex items-center gap-2"
                 >
-                  <Trash2 className="w-4 h-4" />
-                  로컬 캐시 삭제
+                  <UserX className="w-4 h-4" />
+                  계정 탈퇴하기
                 </Button>
               </div>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-medium text-green-900 mb-2">클라우드 저장소 사용</h4>
-                <p className="text-sm text-green-800">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-medium text-blue-900 mb-2">클라우드 저장소 사용</h4>
+                <p className="text-sm text-blue-800">
                   • 모든 중요한 데이터는 클라우드에 안전하게 저장됩니다<br/>
                   • 여러 기기에서 동일한 정보에 접근할 수 있습니다<br/>
                   • 브라우저를 바꿔도 데이터가 유지됩니다<br/>
-                  • 로컬 캐시 삭제는 임시 파일만 제거하며, 중요 데이터는 보존됩니다
+                  • 데이터 내보내기로 언제든 백업을 만들 수 있습니다
+                </p>
+              </div>
+              <div className="bg-red-50 p-4 rounded-lg">
+                <h4 className="font-medium text-red-900 mb-2">⚠️ 계정 탈퇴 시 주의사항</h4>
+                <p className="text-sm text-red-800">
+                  계정을 탈퇴하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다. 
+                  탈퇴 전에 반드시 데이터를 내보내기해서 백업하세요.
                 </p>
               </div>
             </CardContent>
