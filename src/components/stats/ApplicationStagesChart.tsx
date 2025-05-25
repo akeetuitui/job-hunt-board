@@ -106,6 +106,9 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
                 tickLine={false}
                 tick={{ fontSize: 10 }}
                 width={30}
+                domain={[0, 'dataMax']}
+                tickFormatter={(value) => `${value}`}
+                allowDecimals={false}
               />
               <Tooltip
                 cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
