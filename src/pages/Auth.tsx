@@ -12,11 +12,31 @@ import { useNavigate } from 'react-router-dom';
 
 const Auth = () => {
   const [loading, setLoading] = useState(false);
+  const [kakaoLoading, setKakaoLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const handleKakaoLogin = async () => {
+    setKakaoLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'kakao',
+      options: {
+        redirectTo: window.location.origin
+      }
+    });
+
+    if (error) {
+      toast({
+        title: "카카오 로그인 오류",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+    setKakaoLoading(false);
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,6 +120,29 @@ const Auth = () => {
           <p className="text-gray-600">취업 지원 현황을 효율적으로 관리하세요</p>
         </CardHeader>
         <CardContent>
+          <div className="space-y-4 mb-6">
+            <Button 
+              onClick={handleKakaoLogin}
+              disabled={kakaoLoading}
+              className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium"
+            >
+              {kakaoLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"/>
+              </svg>
+              카카오로 로그인
+            </Button>
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-slate-50 px-2 text-muted-foreground">또는</span>
+              </div>
+            </div>
+          </div>
+
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">로그인</TabsTrigger>
