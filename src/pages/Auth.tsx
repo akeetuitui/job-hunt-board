@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Mail, Lock, User } from 'lucide-react';
+import { Loader2, Mail, Lock, User, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ProfileSetupDialog from '@/components/ProfileSetupDialog';
 
@@ -14,10 +14,13 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [kakaoLoading, setKakaoLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
   const [showProfileSetup, setShowProfileSetup] = useState(false);
+  const [currentTab, setCurrentTab] = useState('login');
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -57,6 +60,38 @@ const Auth = () => {
       });
     }
     setKakaoLoading(false);
+  };
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      toast({
+        title: "오류",
+        description: "이메일을 입력해주세요.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setResetLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: `${window.location.origin}/auth?tab=reset-password`,
+    });
+
+    if (error) {
+      toast({
+        title: "비밀번호 재설정 오류",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "이메일을 확인해주세요",
+        description: "비밀번호 재설정 링크를 이메일로 보내드렸습니다.",
+      });
+      setCurrentTab('login');
+    }
+    setResetLoading(false);
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -184,7 +219,7 @@ const Auth = () => {
               </div>
             </div>
 
-            <Tabs defaultValue="login" className="w-full">
+            <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">로그인</TabsTrigger>
                 <TabsTrigger value="signup">회원가입</TabsTrigger>
@@ -224,6 +259,15 @@ const Auth = () => {
                     {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                     로그인
                   </Button>
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentTab('reset')}
+                      className="text-sm text-indigo-600 hover:text-indigo-500 hover:underline"
+                    >
+                      비밀번호를 잊으셨나요?
+                    </button>
+                  </div>
                 </form>
               </TabsContent>
               
@@ -276,6 +320,49 @@ const Auth = () => {
                     회원가입
                   </Button>
                 </form>
+              </TabsContent>
+
+              <TabsContent value="reset">
+                <div className="space-y-4">
+                  <div className="text-center space-y-2">
+                    <h3 className="text-lg font-medium">비밀번호 재설정</h3>
+                    <p className="text-sm text-gray-600">
+                      등록하신 이메일 주소를 입력하시면 비밀번호 재설정 링크를 보내드립니다.
+                    </p>
+                  </div>
+                  
+                  <form onSubmit={handlePasswordReset} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="reset-email" className="flex items-center">
+                        <Mail className="w-4 h-4 mr-2" />
+                        이메일
+                      </Label>
+                      <Input
+                        id="reset-email"
+                        type="email"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        placeholder="example@email.com"
+                        required
+                      />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={resetLoading}>
+                      {resetLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                      재설정 링크 보내기
+                    </Button>
+                  </form>
+
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentTab('login')}
+                      className="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-500 hover:underline"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-1" />
+                      로그인으로 돌아가기
+                    </button>
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>
