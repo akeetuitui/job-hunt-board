@@ -338,7 +338,7 @@ const Settings = () => {
                   <Label htmlFor="language">언어</Label>
                   <Select 
                     value={settings.preferences.language} 
-                    onValueChange={(value) => handlePreferenceChange('language', value)}
+                    onValueChange={(value) => handlePreferenceChange('language' as keyof typeof settings.preferences, value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -354,7 +354,7 @@ const Settings = () => {
                   <Label htmlFor="theme">테마</Label>
                   <Select 
                     value={settings.preferences.theme} 
-                    onValueChange={(value) => handlePreferenceChange('theme', value)}
+                    onValueChange={(value) => handlePreferenceChange('theme' as keyof typeof settings.preferences, value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -375,7 +375,7 @@ const Settings = () => {
                 </div>
                 <Switch
                   checked={settings.preferences.autoSave}
-                  onCheckedChange={(checked) => handlePreferenceChange('autoSave', checked)}
+                  onCheckedChange={(checked) => handlePreferenceChange('autoSave' as keyof typeof settings.preferences, checked)}
                 />
               </div>
               
@@ -386,7 +386,7 @@ const Settings = () => {
                 </div>
                 <Switch
                   checked={settings.preferences.compactView}
-                  onCheckedChange={(checked) => handlePreferenceChange('compactView', checked)}
+                  onCheckedChange={(checked) => handlePreferenceChange('compactView' as keyof typeof settings.preferences, checked)}
                 />
               </div>
               
