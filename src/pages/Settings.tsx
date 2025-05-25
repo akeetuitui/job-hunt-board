@@ -64,12 +64,12 @@ const Settings = () => {
     }
   };
 
-  const handleNotificationChange = (key: string, value: boolean) => {
+  const handleNotificationChange = (key: keyof typeof settings.notifications, value: boolean) => {
     const updatedNotifications = { ...settings.notifications, [key]: value };
     updateNotifications(updatedNotifications);
   };
 
-  const handlePreferenceChange = (key: string, value: string | boolean) => {
+  const handlePreferenceChange = (key: keyof typeof settings.preferences, value: string | boolean) => {
     const updatedPreferences = { ...settings.preferences, [key]: value };
     updatePreferences(updatedPreferences);
   };
