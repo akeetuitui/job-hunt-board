@@ -131,23 +131,28 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={chartData}
-              margin={{ top: 10, right: 10, left: -20, bottom: 5 }}
+              margin={{ top: 10, right: 30, left: 20, bottom: 60 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis 
                 dataKey="displayDate" 
-                tick={{ fontSize: 11 }}
-                height={40}
-                padding={{ left: 10, right: 10 }}
+                tick={{ fontSize: 12, fontWeight: 500 }}
+                height={60}
+                padding={{ left: 20, right: 20 }}
                 axisLine={{ stroke: "#e5e5e5" }}
-                angle={-45}
+                tickLine={{ stroke: "#e5e5e5" }}
+                angle={-35}
                 textAnchor="end"
                 interval={0}
               />
               <YAxis 
-                tick={{ fontSize: 11 }}
-                width={30}
+                tick={{ fontSize: 12 }}
+                width={50}
                 axisLine={{ stroke: "#e5e5e5" }}
+                tickLine={{ stroke: "#e5e5e5" }}
+                domain={[0, 'dataMax']}
+                tickFormatter={(value) => `${value}`}
+                allowDecimals={false}
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend 
