@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, Mail, Lock, User, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ProfileSetupDialog from '@/components/ProfileSetupDialog';
+import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
 
 const Auth = () => {
   const [loading, setLoading] = useState(false);
@@ -23,6 +24,21 @@ const Auth = () => {
   const [currentTab, setCurrentTab] = useState('login');
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { profile, loading: profileLoading } = useProfile();
+
+  // 사용자가 로그인되어 있고 프로필이 로드되었을 때 체크
+  useEffect(() => {
+    if (user && !profileLoading && profile) {
+      // 대학교나 학과 정보가 없으면 프로필 설정 다이얼로그 표시
+      if (!profile.university || !profile.major) {
+        setShowProfileSetup(true);
+      } else {
+        // 프로필이 완성되어 있으면 메인 페이지로 이동
+        navigate('/');
+      }
+    }
+  }, [user, profile, profileLoading, navigate]);
 
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
@@ -108,8 +124,6 @@ const Auth = () => {
         title: "회원가입 성공!",
         description: "프로필 설정을 완료해주세요.",
       });
-      // Show profile setup dialog after successful signup
-      setShowProfileSetup(true);
     }
     setLoading(false);
   };
@@ -138,12 +152,6 @@ const Auth = () => {
           '이메일 또는 비밀번호가 올바르지 않습니다.' : error.message,
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "로그인 성공!",
-        description: "JobTracker에 오신 것을 환영합니다.",
-      });
-      navigate('/');
     }
     setLoading(false);
   };
