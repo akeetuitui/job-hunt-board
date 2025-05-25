@@ -92,7 +92,7 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
           className="w-full h-full"
         >
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={statusCounts} margin={{ top: 35, right: 0, left: -20, bottom: 5 }}>
+            <BarChart data={statusCounts} margin={{ top: 35, right: 20, left: 40, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
               <XAxis 
                 dataKey="name" 
@@ -105,7 +105,7 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
                 axisLine={false} 
                 tickLine={false}
                 tick={{ fontSize: 10 }}
-                width={30}
+                width={50}
                 domain={[0, 'dataMax']}
                 tickFormatter={(value) => `${value}`}
                 allowDecimals={false}
