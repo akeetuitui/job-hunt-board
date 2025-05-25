@@ -17,7 +17,7 @@ interface CalendarEvent {
   company: string;
   date: Date;
   time: string;
-  type: "interview" | "test" | "deadline" | "follow-up";
+  type: "interview" | "aptitude" | "deadline" | "follow-up";
   location?: string;
 }
 
@@ -25,7 +25,7 @@ const getEventTypeColor = (type: CalendarEvent["type"]) => {
   switch (type) {
     case "interview":
       return "bg-blue-100 text-blue-800 border-blue-200";
-    case "test":
+    case "aptitude":
       return "bg-purple-100 text-purple-800 border-purple-200";
     case "deadline":
       return "bg-red-100 text-red-800 border-red-200";
@@ -40,8 +40,8 @@ const getEventTypeLabel = (type: CalendarEvent["type"]) => {
   switch (type) {
     case "interview":
       return "면접";
-    case "test":
-      return "테스트";
+    case "aptitude":
+      return "인적성/역량검사";
     case "deadline":
       return "마감";
     case "follow-up":
@@ -95,7 +95,7 @@ const Calendar = () => {
       case "applied":
         return "서류 결과 발표";
       case "aptitude":
-        return "인적성 검사";
+        return "인적성/역량검사";
       case "interview":
         return "면접";
       default:
@@ -108,7 +108,7 @@ const Calendar = () => {
       case "pending":
         return "deadline";
       case "aptitude":
-        return "test";
+        return "aptitude";
       case "interview":
         return "interview";
       default:

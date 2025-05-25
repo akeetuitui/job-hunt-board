@@ -86,9 +86,9 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
       // Add a total count
       entry.total = entry.pending + entry.applied + entry.aptitude + entry.interview + entry.passed + entry.rejected;
       
-      // Format date for display
+      // Format date for display - show year and month clearly
       const [year, month] = entry.date.split('-');
-      entry.displayDate = `${year}.${month}`;
+      entry.displayDate = `${year}년 ${parseInt(month)}월`;
       
       return entry;
     });
@@ -137,9 +137,12 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
               <XAxis 
                 dataKey="displayDate" 
                 tick={{ fontSize: 11 }}
-                height={30}
+                height={40}
                 padding={{ left: 10, right: 10 }}
                 axisLine={{ stroke: "#e5e5e5" }}
+                angle={-45}
+                textAnchor="end"
+                interval={0}
               />
               <YAxis 
                 tick={{ fontSize: 11 }}
