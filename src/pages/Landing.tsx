@@ -140,7 +140,6 @@ const Landing = () => {
             지금 시작해서 체계적인 취업 준비를 경험하세요
           </h2>
           <p className="text-xl text-indigo-100 mb-8">
-            수천 명의 취업 준비생들이 JobTracker와 함께 성공했습니다
           </p>
           <Button 
             size="lg" 
