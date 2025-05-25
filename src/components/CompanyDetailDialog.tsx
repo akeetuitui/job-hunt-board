@@ -255,12 +255,12 @@ export const CompanyDetailDialog = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description" className="text-gray-700">기업 설명</Label>
+              <Label htmlFor="description" className="text-gray-700">지원 메모</Label>
               <Textarea
                 id="description"
                 value={formData.description || ""}
                 onChange={(e) => handleInputChange("description", e.target.value)}
-                placeholder="기업에 대한 상세한 정보를 입력하세요"
+                placeholder="기업에 대한 메모나 지원 관련 정보를 입력하세요"
                 rows={4}
                 className="border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
               />
