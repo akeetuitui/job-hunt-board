@@ -64,6 +64,16 @@ const Settings = () => {
     }
   };
 
+  const handleNotificationChange = (key: string, value: boolean) => {
+    const updatedNotifications = { ...settings.notifications, [key]: value };
+    updateNotifications(updatedNotifications);
+  };
+
+  const handlePreferenceChange = (key: string, value: string | boolean) => {
+    const updatedPreferences = { ...settings.preferences, [key]: value };
+    updatePreferences(updatedPreferences);
+  };
+
   const handleNotificationsSave = async () => {
     const success = await updateNotifications(settings.notifications);
     if (success) {
@@ -270,9 +280,7 @@ const Settings = () => {
                 </div>
                 <Switch
                   checked={settings.notifications.emailNotifications}
-                  onCheckedChange={(checked) => 
-                    updateNotifications({...settings.notifications, emailNotifications: checked})
-                  }
+                  onCheckedChange={(checked) => handleNotificationChange('emailNotifications', checked)}
                 />
               </div>
               
@@ -283,9 +291,7 @@ const Settings = () => {
                 </div>
                 <Switch
                   checked={settings.notifications.interviewReminders}
-                  onCheckedChange={(checked) => 
-                    updateNotifications({...settings.notifications, interviewReminders: checked})
-                  }
+                  onCheckedChange={(checked) => handleNotificationChange('interviewReminders', checked)}
                 />
               </div>
               
@@ -296,9 +302,7 @@ const Settings = () => {
                 </div>
                 <Switch
                   checked={settings.notifications.applicationDeadlines}
-                  onCheckedChange={(checked) => 
-                    updateNotifications({...settings.notifications, applicationDeadlines: checked})
-                  }
+                  onCheckedChange={(checked) => handleNotificationChange('applicationDeadlines', checked)}
                 />
               </div>
               
@@ -309,9 +313,7 @@ const Settings = () => {
                 </div>
                 <Switch
                   checked={settings.notifications.soundEnabled}
-                  onCheckedChange={(checked) => 
-                    updateNotifications({...settings.notifications, soundEnabled: checked})
-                  }
+                  onCheckedChange={(checked) => handleNotificationChange('soundEnabled', checked)}
                 />
               </div>
               
@@ -336,9 +338,7 @@ const Settings = () => {
                   <Label htmlFor="language">언어</Label>
                   <Select 
                     value={settings.preferences.language} 
-                    onValueChange={(value) => 
-                      updatePreferences({...settings.preferences, language: value})
-                    }
+                    onValueChange={(value) => handlePreferenceChange('language', value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -354,9 +354,7 @@ const Settings = () => {
                   <Label htmlFor="theme">테마</Label>
                   <Select 
                     value={settings.preferences.theme} 
-                    onValueChange={(value) => 
-                      updatePreferences({...settings.preferences, theme: value})
-                    }
+                    onValueChange={(value) => handlePreferenceChange('theme', value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -377,9 +375,7 @@ const Settings = () => {
                 </div>
                 <Switch
                   checked={settings.preferences.autoSave}
-                  onCheckedChange={(checked) => 
-                    updatePreferences({...settings.preferences, autoSave: checked})
-                  }
+                  onCheckedChange={(checked) => handlePreferenceChange('autoSave', checked)}
                 />
               </div>
               
@@ -390,9 +386,7 @@ const Settings = () => {
                 </div>
                 <Switch
                   checked={settings.preferences.compactView}
-                  onCheckedChange={(checked) => 
-                    updatePreferences({...settings.preferences, compactView: checked})
-                  }
+                  onCheckedChange={(checked) => handlePreferenceChange('compactView', checked)}
                 />
               </div>
               
