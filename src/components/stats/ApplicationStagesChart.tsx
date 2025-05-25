@@ -22,6 +22,16 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
     return texts[status];
   };
 
+  // Blue variations for each status
+  const statusColors: Record<Company["status"], string> = {
+    pending: "#e0f2fe",  // Very light blue
+    applied: "#bae6fd",  // Light blue
+    aptitude: "#7dd3fc", // Medium light blue
+    interview: "#38bdf8", // Medium blue
+    passed: "#0ea5e9",   // Blue
+    rejected: "#0284c7"  // Dark blue
+  };
+
   const statusOrder: Company["status"][] = ["pending", "applied", "aptitude", "interview", "passed", "rejected"];
   
   const statusCounts = statusOrder.map((status, index) => {
@@ -30,7 +40,7 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
       name: getStatusText(status),
       count,
       percentage: companies.length ? Math.round((count / companies.length) * 100) : 0,
-      index: index + 1
+      color: statusColors[status]
     };
   });
 
@@ -47,34 +57,23 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
     
     return (
       <g>
-        {/* Index number */}
-        <text 
-          x={centerX} 
-          y={y - 25} 
-          fill="#6b7280" 
-          textAnchor="middle" 
-          fontSize="10" 
-          fontWeight="600"
-        >
-          #{payload.index}
-        </text>
         {/* Count and percentage */}
         <text 
           x={centerX} 
-          y={y - 8} 
+          y={y - 20} 
           fill="#374151" 
           textAnchor="middle" 
-          fontSize="11" 
+          fontSize="12" 
           fontWeight="600"
         >
           {payload.count}건
         </text>
         <text 
           x={centerX} 
-          y={y + 5} 
+          y={y - 6} 
           fill="#6b7280" 
           textAnchor="middle" 
-          fontSize="10" 
+          fontSize="11" 
           fontWeight="500"
         >
           ({payload.percentage}%)
@@ -88,7 +87,7 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
       <div className="flex-1 min-h-0">
         <ChartContainer
           config={{
-            line1: { color: "#14b8a6" },
+            line1: { color: "#0ea5e9" },
           }}
           className="w-full h-full"
         >
@@ -115,7 +114,7 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
                     const data = payload[0].payload;
                     return (
                       <div className="rounded-lg border bg-white p-2 shadow-md">
-                        <div className="font-medium">#{data.index} {data.name}</div>
+                        <div className="font-medium">{data.name}</div>
                         <div className="text-sm">{data.count}건 ({data.percentage}%)</div>
                       </div>
                     );
@@ -126,11 +125,14 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
               <Bar 
                 dataKey="count"
                 radius={[4, 4, 0, 0]}
-                fill="#14b8a6"
                 fillOpacity={0.9}
                 barSize={26}
                 label={renderCustomLabel}
-              />
+              >
+                {statusCounts.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
