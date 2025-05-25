@@ -62,19 +62,22 @@ export const useSettings = () => {
         console.error('설정 로드 오류:', error);
         setSettings(defaultSettings);
       } else if (data) {
-        // 타입 안전한 변환
+        // Json 타입을 안전하게 캐스팅
+        const notificationsData = data.notifications as any;
+        const preferencesData = data.preferences as any;
+        
         const notifications: NotificationSettings = {
-          emailNotifications: data.notifications?.emailNotifications ?? defaultSettings.notifications.emailNotifications,
-          interviewReminders: data.notifications?.interviewReminders ?? defaultSettings.notifications.interviewReminders,
-          applicationDeadlines: data.notifications?.applicationDeadlines ?? defaultSettings.notifications.applicationDeadlines,
-          soundEnabled: data.notifications?.soundEnabled ?? defaultSettings.notifications.soundEnabled
+          emailNotifications: notificationsData?.emailNotifications ?? defaultSettings.notifications.emailNotifications,
+          interviewReminders: notificationsData?.interviewReminders ?? defaultSettings.notifications.interviewReminders,
+          applicationDeadlines: notificationsData?.applicationDeadlines ?? defaultSettings.notifications.applicationDeadlines,
+          soundEnabled: notificationsData?.soundEnabled ?? defaultSettings.notifications.soundEnabled
         };
         
         const preferences: UserPreferences = {
-          language: data.preferences?.language ?? defaultSettings.preferences.language,
-          theme: data.preferences?.theme ?? defaultSettings.preferences.theme,
-          autoSave: data.preferences?.autoSave ?? defaultSettings.preferences.autoSave,
-          compactView: data.preferences?.compactView ?? defaultSettings.preferences.compactView
+          language: preferencesData?.language ?? defaultSettings.preferences.language,
+          theme: preferencesData?.theme ?? defaultSettings.preferences.theme,
+          autoSave: preferencesData?.autoSave ?? defaultSettings.preferences.autoSave,
+          compactView: preferencesData?.compactView ?? defaultSettings.preferences.compactView
         };
         
         setSettings({ notifications, preferences });
