@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -73,18 +72,6 @@ const Settings = () => {
     updateNotifications(updatedNotifications);
   };
 
-  const handleNotificationsSave = async () => {
-    if (!settings?.notifications) return;
-    
-    const success = await updateNotifications(settings.notifications);
-    if (success) {
-      toast({
-        title: "알림 설정 저장됨",
-        description: "알림 설정이 성공적으로 저장되었습니다.",
-      });
-    }
-  };
-
   const handleDataExport = () => {
     const data = {
       profile: profileForm,
@@ -135,18 +122,11 @@ const Settings = () => {
     if (!user) return;
 
     try {
-      // Supabase에서 사용자 데이터 삭제 (관련 테이블들은 CASCADE로 자동 삭제됨)
-      const { error } = await supabase.rpc('delete_user_account');
-      
-      if (error) {
-        console.error('계정 삭제 오류:', error);
-        toast({
-          title: "계정 삭제 실패",
-          description: "계정 삭제 중 오류가 발생했습니다. 고객지원에 문의해주세요.",
-          variant: "destructive",
-        });
-        return;
-      }
+      // Supabase에서 사용자 데이터 삭제 - RPC 함수가 없을 경우 직접 삭제
+      // 먼저 관련 데이터들을 삭제
+      await supabase.from('companies').delete().eq('user_id', user.id);
+      await supabase.from('user_settings').delete().eq('user_id', user.id);
+      await supabase.from('profiles').delete().eq('id', user.id);
 
       // 계정 삭제 후 로그아웃
       await supabase.auth.signOut();
@@ -307,8 +287,6 @@ const Settings = () => {
                   onCheckedChange={(checked) => handleNotificationChange('soundEnabled', checked)}
                 />
               </div>
-              
-              <Button onClick={handleNotificationsSave}>알림 설정 저장</Button>
             </CardContent>
           </Card>
 
