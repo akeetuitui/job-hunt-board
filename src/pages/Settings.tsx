@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Bell, Download, UserX, Shield } from "lucide-react";
@@ -20,7 +19,7 @@ const Settings = () => {
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading, updateProfile } = useProfile();
-  const { settings, loading: settingsLoading, updateNotifications, updatePreferences } = useSettings();
+  const { settings, loading: settingsLoading, updateNotifications } = useSettings();
   const { companies } = useCompanies();
   const navigate = useNavigate();
   
@@ -69,27 +68,12 @@ const Settings = () => {
     updateNotifications(updatedNotifications);
   };
 
-  const handlePreferenceChange = (key: keyof typeof settings.preferences, value: string | boolean) => {
-    const updatedPreferences = { ...settings.preferences, [key]: value };
-    updatePreferences(updatedPreferences);
-  };
-
   const handleNotificationsSave = async () => {
     const success = await updateNotifications(settings.notifications);
     if (success) {
       toast({
         title: "알림 설정 저장됨",
         description: "알림 설정이 성공적으로 저장되었습니다.",
-      });
-    }
-  };
-
-  const handlePreferencesSave = async () => {
-    const success = await updatePreferences(settings.preferences);
-    if (success) {
-      toast({
-        title: "환경설정 저장됨",
-        description: "환경설정이 성공적으로 저장되었습니다.",
       });
     }
   };
@@ -318,79 +302,6 @@ const Settings = () => {
               </div>
               
               <Button onClick={handleNotificationsSave}>알림 설정 저장</Button>
-            </CardContent>
-          </Card>
-
-          {/* 환경 설정 */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="w-5 h-5" />
-                환경 설정
-              </CardTitle>
-              <CardDescription>
-                앱 사용 환경을 설정하세요
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="language">언어</Label>
-                  <Select 
-                    value={settings.preferences.language} 
-                    onValueChange={(value) => handlePreferenceChange('language' as keyof typeof settings.preferences, value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ko">한국어</SelectItem>
-                      <SelectItem value="en">English</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="theme">테마</Label>
-                  <Select 
-                    value={settings.preferences.theme} 
-                    onValueChange={(value) => handlePreferenceChange('theme' as keyof typeof settings.preferences, value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="light">라이트</SelectItem>
-                      <SelectItem value="dark">다크</SelectItem>
-                      <SelectItem value="system">시스템 설정</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>자동 저장</Label>
-                  <p className="text-sm text-gray-500">변경사항을 자동으로 저장합니다</p>
-                </div>
-                <Switch
-                  checked={settings.preferences.autoSave}
-                  onCheckedChange={(checked) => handlePreferenceChange('autoSave' as keyof typeof settings.preferences, checked)}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>컴팩트 보기</Label>
-                  <p className="text-sm text-gray-500">더 많은 정보를 한 화면에 표시합니다</p>
-                </div>
-                <Switch
-                  checked={settings.preferences.compactView}
-                  onCheckedChange={(checked) => handlePreferenceChange('compactView' as keyof typeof settings.preferences, checked)}
-                />
-              </div>
-              
-              <Button onClick={handlePreferencesSave}>환경설정 저장</Button>
             </CardContent>
           </Card>
 
