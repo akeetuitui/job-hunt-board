@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Company } from "@/pages/Index";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
@@ -39,6 +38,12 @@ export const ApplicationStagesChart = ({ companies }: ApplicationStagesChartProp
   // Custom label component to show values on top of bars
   const renderCustomLabel = (props: any) => {
     const { x, y, width, value, payload } = props;
+    
+    // Safety check: return null if payload is undefined or doesn't have the required properties
+    if (!payload || (payload.count === undefined && payload.percentage === undefined)) {
+      return null;
+    }
+    
     const displayValue = viewType === 'percentage' ? `${payload.percentage}%` : payload.count;
     const centerX = x + width / 2;
     
