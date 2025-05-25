@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCompanies } from "@/hooks/useCompanies";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+
+interface NotificationSettings {
+  emailNotifications: boolean;
+  interviewReminders: boolean;
+  applicationDeadlines: boolean;
+  soundEnabled: boolean;
+}
 
 const Settings = () => {
   const { toast } = useToast();
@@ -62,12 +70,16 @@ const Settings = () => {
     }
   };
 
-  const handleNotificationChange = (key: keyof typeof settings.notifications, value: boolean) => {
+  const handleNotificationChange = (key: keyof NotificationSettings, value: boolean) => {
+    if (!settings?.notifications) return;
+    
     const updatedNotifications = { ...settings.notifications, [key]: value };
     updateNotifications(updatedNotifications);
   };
 
   const handleNotificationsSave = async () => {
+    if (!settings?.notifications) return;
+    
     const success = await updateNotifications(settings.notifications);
     if (success) {
       toast({
@@ -262,7 +274,7 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">중요한 업데이트를 이메일로 받습니다</p>
                 </div>
                 <Switch
-                  checked={settings.notifications.emailNotifications}
+                  checked={settings?.notifications?.emailNotifications || false}
                   onCheckedChange={(checked) => handleNotificationChange('emailNotifications', checked)}
                 />
               </div>
@@ -273,7 +285,7 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">면접 하루 전 알림을 받습니다</p>
                 </div>
                 <Switch
-                  checked={settings.notifications.interviewReminders}
+                  checked={settings?.notifications?.interviewReminders || false}
                   onCheckedChange={(checked) => handleNotificationChange('interviewReminders', checked)}
                 />
               </div>
@@ -284,7 +296,7 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">지원 마감 3일 전 알림을 받습니다</p>
                 </div>
                 <Switch
-                  checked={settings.notifications.applicationDeadlines}
+                  checked={settings?.notifications?.applicationDeadlines || false}
                   onCheckedChange={(checked) => handleNotificationChange('applicationDeadlines', checked)}
                 />
               </div>
@@ -295,7 +307,7 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">알림과 함께 사운드를 재생합니다</p>
                 </div>
                 <Switch
-                  checked={settings.notifications.soundEnabled}
+                  checked={settings?.notifications?.soundEnabled || false}
                   onCheckedChange={(checked) => handleNotificationChange('soundEnabled', checked)}
                 />
               </div>
