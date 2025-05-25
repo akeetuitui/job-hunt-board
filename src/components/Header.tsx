@@ -20,7 +20,7 @@ const Header = () => {
   };
 
   const navigation = [
-    { name: "지원현황", href: "/" },
+    { name: "지원현황", href: "/dashboard" },
     { name: "통계", href: "/statistics" },
     { name: "일정", href: "/calendar" },
     { name: "설정", href: "/settings" },
@@ -31,7 +31,7 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
-            <Link to="/" className="text-xl font-bold text-blue-600">
+            <Link to="/dashboard" className="text-xl font-bold text-blue-600">
               JobTracker
             </Link>
             <nav className="hidden md:flex space-x-6">
