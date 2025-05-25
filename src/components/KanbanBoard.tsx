@@ -10,7 +10,7 @@ interface KanbanBoardProps {
   onDeleteCompany: (id: string) => void;
 }
 
-export const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: KanbanBoardProps) => {
+const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: KanbanBoardProps) => {
   const {
     statusConfig,
     draggedItem,
@@ -67,3 +67,5 @@ export const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: Kan
     </div>
   );
 };
+
+export default KanbanBoard;

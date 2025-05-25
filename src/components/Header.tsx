@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export const Header = () => {
+const Header = () => {
   const location = useLocation();
   const { user, signOut } = useAuth();
 
@@ -73,3 +73,5 @@ export const Header = () => {
     </header>
   );
 };
+
+export default Header;

@@ -3,15 +3,50 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/Header';
-import KanbanBoard from '@/components/KanbanBoard';
+import { Header } from '@/components/Header';
+import { KanbanBoard } from '@/components/KanbanBoard';
 import ProfileSetupDialog from '@/components/ProfileSetupDialog';
+import { AddCompanyDialog } from '@/components/AddCompanyDialog';
+import { useCompanies } from '@/hooks/useCompanies';
+
+// Type definitions
+export type PositionType = "신입" | "채용전환형인턴" | "체험형인턴";
+
+export interface CoverLetterSection {
+  id: string;
+  title: string;
+  content: string;
+  maxLength?: number;
+}
+
+export interface Company {
+  id: string;
+  name: string;
+  position: string;
+  positionType?: PositionType;
+  status: "pending" | "applied" | "aptitude" | "interview" | "passed" | "rejected";
+  deadline?: string;
+  description?: string;
+  applicationLink?: string;
+  coverLetter?: string;
+  coverLetterSections?: CoverLetterSection[];
+  createdAt: string;
+}
 
 const Index = () => {
   const { user, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading } = useProfile();
   const [showProfileSetup, setShowProfileSetup] = useState(false);
+  const [showAddCompanyDialog, setShowAddCompanyDialog] = useState(false);
   const navigate = useNavigate();
+
+  const {
+    companies,
+    isLoading: companiesLoading,
+    addCompany,
+    updateCompany,
+    deleteCompany,
+  } = useCompanies();
 
   useEffect(() => {
     // 인증 상태가 로딩 중이면 기다림
@@ -32,12 +67,28 @@ const Index = () => {
     }
   }, [user, profile, authLoading, profileLoading, navigate]);
 
+  useEffect(() => {
+    const handleOpenDialog = () => {
+      setShowAddCompanyDialog(true);
+    };
+
+    window.addEventListener('openAddCompanyDialog', handleOpenDialog);
+    return () => {
+      window.removeEventListener('openAddCompanyDialog', handleOpenDialog);
+    };
+  }, []);
+
   const handleProfileSetupClose = () => {
     setShowProfileSetup(false);
   };
 
+  const handleAddCompany = (company: Omit<Company, "id" | "createdAt">) => {
+    addCompany(company);
+    setShowAddCompanyDialog(false);
+  };
+
   // 인증 또는 프로필 로딩 중이면 로딩 표시
-  if (authLoading || profileLoading) {
+  if (authLoading || profileLoading || companiesLoading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
@@ -58,13 +109,23 @@ const Index = () => {
       <div className="min-h-screen bg-slate-50">
         <Header />
         <main className="container mx-auto px-4 py-8">
-          <KanbanBoard />
+          <KanbanBoard 
+            companies={companies}
+            onUpdateCompany={updateCompany}
+            onDeleteCompany={deleteCompany}
+          />
         </main>
       </div>
 
       <ProfileSetupDialog 
         open={showProfileSetup} 
         onClose={handleProfileSetupClose}
+      />
+
+      <AddCompanyDialog
+        isOpen={showAddCompanyDialog}
+        onClose={() => setShowAddCompanyDialog(false)}
+        onAdd={handleAddCompany}
       />
     </>
   );
