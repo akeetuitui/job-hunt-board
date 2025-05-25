@@ -62,7 +62,7 @@ const Settings = () => {
     }
   };
 
-  const handleNotificationChange = (key: 'emailNotifications' | 'interviewReminders' | 'applicationDeadlines' | 'soundEnabled', value: boolean) => {
+  const handleNotificationChange = (key: keyof typeof settings.notifications, value: boolean) => {
     const updatedNotifications = { ...settings.notifications, [key]: value };
     updateNotifications(updatedNotifications);
   };
