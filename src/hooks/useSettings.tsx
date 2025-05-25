@@ -60,12 +60,15 @@ export const useSettings = () => {
 
       if (error) {
         console.error('설정 로드 오류:', error);
-        // 에러가 발생해도 기본 설정으로 진행
         setSettings(defaultSettings);
       } else if (data) {
+        // 안전한 타입 변환
+        const notifications = data.notifications as unknown as NotificationSettings;
+        const preferences = data.preferences as unknown as UserPreferences;
+        
         setSettings({
-          notifications: data.notifications as NotificationSettings,
-          preferences: data.preferences as UserPreferences
+          notifications: { ...defaultSettings.notifications, ...notifications },
+          preferences: { ...defaultSettings.preferences, ...preferences }
         });
       } else {
         // 설정이 없으면 기본 설정으로 새로 생성
@@ -88,11 +91,11 @@ export const useSettings = () => {
         .from('user_settings')
         .insert({
           user_id: user.id,
-          notifications: defaultSettings.notifications,
-          preferences: defaultSettings.preferences
+          notifications: defaultSettings.notifications as any,
+          preferences: defaultSettings.preferences as any
         });
 
-      if (error) {
+      if (error && error.code !== '23505') { // 중복 키 오류가 아닌 경우만 로그
         console.error('초기 설정 생성 오류:', error);
       } else {
         setSettings(defaultSettings);
@@ -111,8 +114,8 @@ export const useSettings = () => {
         .from('user_settings')
         .upsert({
           user_id: user.id,
-          notifications: notifications,
-          preferences: settings.preferences
+          notifications: notifications as any,
+          preferences: settings.preferences as any
         });
 
       if (error) {
@@ -147,8 +150,8 @@ export const useSettings = () => {
         .from('user_settings')
         .upsert({
           user_id: user.id,
-          notifications: settings.notifications,
-          preferences: preferences
+          notifications: settings.notifications as any,
+          preferences: preferences as any
         });
 
       if (error) {
