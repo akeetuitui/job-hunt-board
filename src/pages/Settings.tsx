@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,13 +13,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCompanies } from "@/hooks/useCompanies";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-
-interface NotificationSettings {
-  emailNotifications: boolean;
-  interviewReminders: boolean;
-  applicationDeadlines: boolean;
-  soundEnabled: boolean;
-}
 
 const Settings = () => {
   const { toast } = useToast();
@@ -70,7 +62,7 @@ const Settings = () => {
     }
   };
 
-  const handleNotificationChange = (key: keyof NotificationSettings, value: boolean) => {
+  const handleNotificationChange = (key: string, value: boolean) => {
     if (!settings?.notifications) return;
     
     const updatedNotifications = { ...settings.notifications, [key]: value };
