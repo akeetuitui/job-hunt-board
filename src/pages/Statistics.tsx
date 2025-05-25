@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { Header } from "@/components/Header";
+import Header from "@/components/Header";
 import { StatsOverview } from "@/components/stats/StatsOverview";
 import { ApplicationStagesChart } from "@/components/stats/ApplicationStagesChart";
 import { TimelineChart } from "@/components/stats/TimelineChart";
