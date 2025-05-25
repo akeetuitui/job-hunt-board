@@ -3,10 +3,13 @@ import { Header } from "@/components/Header";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CalendarIcon, Clock, MapPin, Building2 } from "lucide-react";
-import { useState } from "react";
-import { format, isToday, isSameDay } from "date-fns";
+import { CalendarIcon, Clock, MapPin, Building2, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { format, isToday, isSameDay, parseISO, addDays } from "date-fns";
 import { ko } from "date-fns/locale";
+import { useAuth } from "@/hooks/useAuth";
+import { useCompanies } from "@/hooks/useCompanies";
+import { useNavigate } from "react-router-dom";
 
 interface CalendarEvent {
   id: string;
@@ -17,34 +20,6 @@ interface CalendarEvent {
   type: "interview" | "test" | "deadline" | "follow-up";
   location?: string;
 }
-
-const mockEvents: CalendarEvent[] = [
-  {
-    id: "1",
-    title: "1차 면접",
-    company: "카카오",
-    date: new Date(2025, 0, 25),
-    time: "14:00",
-    type: "interview",
-    location: "판교 본사"
-  },
-  {
-    id: "2",
-    title: "코딩테스트",
-    company: "네이버",
-    date: new Date(2025, 0, 27),
-    time: "10:00",
-    type: "test"
-  },
-  {
-    id: "3",
-    title: "지원서 마감",
-    company: "토스",
-    date: new Date(2025, 0, 30),
-    time: "23:59",
-    type: "deadline"
-  }
-];
 
 const getEventTypeColor = (type: CalendarEvent["type"]) => {
   switch (type) {
@@ -77,18 +52,97 @@ const getEventTypeLabel = (type: CalendarEvent["type"]) => {
 };
 
 const Calendar = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const { companies, isLoading: isLoadingCompanies } = useCompanies();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
 
-  const eventsForSelectedDate = mockEvents.filter(event =>
+  // Redirect to auth page if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth');
+    }
+  }, [user, loading, navigate]);
+
+  // Convert companies data to calendar events
+  useEffect(() => {
+    if (companies.length === 0) return;
+
+    const calendarEvents: CalendarEvent[] = companies
+      .filter(company => company.deadline) // Only companies with deadlines
+      .map(company => {
+        const deadlineDate = parseISO(company.deadline!);
+        
+        return {
+          id: company.id,
+          title: getEventTitle(company.status),
+          company: company.name,
+          date: deadlineDate,
+          time: format(deadlineDate, "HH:mm"),
+          type: getEventType(company.status),
+          location: undefined
+        };
+      });
+
+    setEvents(calendarEvents);
+  }, [companies]);
+
+  const getEventTitle = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "지원 마감";
+      case "applied":
+        return "서류 결과 발표";
+      case "aptitude":
+        return "인적성 검사";
+      case "interview":
+        return "면접";
+      default:
+        return "일정";
+    }
+  };
+
+  const getEventType = (status: string): CalendarEvent["type"] => {
+    switch (status) {
+      case "pending":
+        return "deadline";
+      case "aptitude":
+        return "test";
+      case "interview":
+        return "interview";
+      default:
+        return "follow-up";
+    }
+  };
+
+  // Show loading spinner while checking auth or loading companies
+  if (loading || isLoadingCompanies) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
+          <p className="text-gray-600">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if user is not authenticated
+  if (!user) {
+    return null;
+  }
+
+  const eventsForSelectedDate = events.filter(event =>
     isSameDay(event.date, selectedDate)
   );
 
   const hasEvents = (date: Date) => {
-    return mockEvents.some(event => isSameDay(event.date, date));
+    return events.some(event => isSameDay(event.date, date));
   };
 
   const getEventsForDate = (date: Date) => {
-    return mockEvents.filter(event => isSameDay(event.date, date));
+    return events.filter(event => isSameDay(event.date, date));
   };
 
   const renderDayContent = (date: Date) => {
@@ -258,7 +312,7 @@ const Calendar = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {mockEvents.slice(0, 3).map((event) => (
+                  {events.slice(0, 3).map((event) => (
                     <div
                       key={event.id}
                       className="flex items-center justify-between p-3 rounded-lg bg-gray-50"
@@ -279,6 +333,11 @@ const Calendar = () => {
                       </Badge>
                     </div>
                   ))}
+                  {events.length === 0 && (
+                    <div className="text-center py-4 text-gray-500">
+                      <p className="text-sm">등록된 일정이 없습니다</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

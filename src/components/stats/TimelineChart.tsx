@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+
+import { useMemo } from "react";
 import { Company } from "@/pages/Index";
 import { ChartContainer } from "@/components/ui/chart";
-import { Button } from "@/components/ui/button";
 import { 
   LineChart, 
   Line, 
@@ -18,9 +18,7 @@ interface TimelineChartProps {
 }
 
 export const TimelineChart = ({ companies }: TimelineChartProps) => {
-  const [viewType, setViewType] = useState<'monthly' | 'weekly'>('weekly');
-
-  // Process data to create timeline
+  // Process data to create timeline (monthly only)
   const chartData = useMemo(() => {
     if (companies.length === 0) {
       return [];
@@ -29,20 +27,10 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
     // Create a map of dates and counts
     const dateMap = new Map();
     
-    // Group by month/8-week period and year
+    // Group by month and year
     companies.forEach(company => {
       const date = new Date(company.createdAt);
-      let dateKey: string;
-      
-      if (viewType === 'monthly') {
-        dateKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-      } else {
-        // Weekly view - group by 8-week periods
-        const startOfYear = new Date(date.getFullYear(), 0, 1);
-        const weekNumber = Math.ceil(((date.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24) + startOfYear.getDay() + 1) / 7);
-        const periodNumber = Math.ceil(weekNumber / 8);
-        dateKey = `${date.getFullYear()}-P${periodNumber}`;
-      }
+      const dateKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
       
       if (!dateMap.has(dateKey)) {
         dateMap.set(dateKey, {
@@ -99,17 +87,12 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
       entry.total = entry.pending + entry.applied + entry.aptitude + entry.interview + entry.passed + entry.rejected;
       
       // Format date for display
-      if (viewType === 'monthly') {
-        const [year, month] = entry.date.split('-');
-        entry.displayDate = `${year}.${month}`;
-      } else {
-        const [year, period] = entry.date.split('-P');
-        entry.displayDate = `${year} ${period}기`;
-      }
+      const [year, month] = entry.date.split('-');
+      entry.displayDate = `${year}.${month}`;
       
       return entry;
     });
-  }, [companies, viewType]);
+  }, [companies]);
   
   // Format the tooltip content
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -132,24 +115,7 @@ export const TimelineChart = ({ companies }: TimelineChartProps) => {
 
   return (
     <div className="w-full h-full">
-      <div className="flex justify-end mb-4 gap-2">
-        <Button
-          variant={viewType === 'monthly' ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setViewType('monthly')}
-        >
-          월별
-        </Button>
-        <Button
-          variant={viewType === 'weekly' ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setViewType('weekly')}
-        >
-          8주별
-        </Button>
-      </div>
-      
-      <div className="flex-1" style={{ height: 'calc(100% - 60px)' }}>
+      <div className="flex-1">
         <ChartContainer
           config={{
             total: { color: "#6366f1" },
