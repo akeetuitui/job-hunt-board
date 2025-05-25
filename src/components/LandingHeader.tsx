@@ -9,7 +9,7 @@ const LandingHeader = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link to="/" className="text-xl font-bold text-blue-600">
+            <Link to="/" className="text-xl font-bold text-indigo-600">
               JobTracker
             </Link>
           </div>

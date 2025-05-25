@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +38,7 @@ const Landing = () => {
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
             취업 준비를{" "}
-            <span className="text-blue-600">체계적으로</span>{" "}
+            <span className="text-indigo-600">체계적으로</span>{" "}
             관리하세요
           </h1>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">
@@ -135,12 +134,12 @@ const Landing = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-blue-600 text-white py-16">
+      <section className="bg-indigo-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">
             지금 시작해서 체계적인 취업 준비를 경험하세요
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl text-indigo-100 mb-8">
             수천 명의 취업 준비생들이 JobTracker와 함께 성공했습니다
           </p>
           <Button 

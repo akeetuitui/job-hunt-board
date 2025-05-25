@@ -31,7 +31,7 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
-            <Link to="/dashboard" className="text-xl font-bold text-blue-600">
+            <Link to="/dashboard" className="text-xl font-bold text-indigo-600">
               JobTracker
             </Link>
             <nav className="hidden md:flex space-x-6">
@@ -40,9 +40,9 @@ const Header = () => {
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    "text-sm font-medium transition-colors hover:text-blue-600",
+                    "text-sm font-medium transition-colors hover:text-indigo-600",
                     location.pathname === item.href
-                      ? "text-blue-600 border-b-2 border-blue-600 pb-4"
+                      ? "text-indigo-600 border-b-2 border-indigo-600 pb-4"
                       : "text-gray-600"
                   )}
                 >
