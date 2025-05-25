@@ -1,9 +1,10 @@
+
 import { useState } from "react";
 import { Company, PositionType } from "@/pages/Index";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MoreVertical, Eye, Trash2, Calendar, Briefcase, Edit2, UserRound } from "lucide-react";
+import { MoreVertical, Eye, Trash2, Calendar, Briefcase, Edit2, UserRound, ExternalLink } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import { CompanyDetailDialog } from "./CompanyDetailDialog";
 import { cn } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
 
 interface CompanyCardProps {
   company: Company;
@@ -33,6 +35,7 @@ export const CompanyCard = ({
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isEditingDeadline, setIsEditingDeadline] = useState(false);
   const [deadline, setDeadline] = useState(company.deadline || "");
+  const { toast } = useToast();
 
   const formatDate = (dateString: string) => {
     if (dateString.includes('T')) {
@@ -84,13 +87,36 @@ export const CompanyCard = ({
     setIsEditingDeadline(false);
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't open detail if clicking on interactive elements
+    if ((e.target as HTMLElement).closest('button, input, [data-dropdown-trigger]')) {
+      return;
+    }
+    setIsDetailOpen(true);
+  };
+
+  const handleApplicationLinkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (company.applicationLink) {
+      window.open(company.applicationLink, '_blank', 'noopener,noreferrer');
+    } else {
+      toast({
+        title: "지원 링크가 없습니다",
+        description: "상세보기에서 지원 링크를 추가해주세요.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <>
       <Card
         draggable
         onDragStart={onDragStart}
+        onClick={handleCardClick}
         className={cn(
-          "cursor-move transition-all duration-200 hover:shadow-md border border-gray-100 group hover:border-gray-200 rounded-lg overflow-hidden",
+          "cursor-pointer transition-all duration-200 hover:shadow-md border border-gray-100 group hover:border-gray-200 rounded-lg overflow-hidden",
           isDragging && "opacity-50 scale-95"
         )}
       >
@@ -111,23 +137,43 @@ export const CompanyCard = ({
               </p>
             </div>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
-                  <MoreVertical className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white">
-                <DropdownMenuItem onClick={() => setIsDetailOpen(true)}>
-                  <Eye className="w-4 h-4 mr-2" />
-                  상세보기
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDelete(company.id)} className="text-red-600 focus:text-red-600">
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  삭제
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center gap-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
+                      onClick={handleApplicationLinkClick}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{company.applicationLink ? "지원 링크로 이동" : "지원 링크 추가 필요"}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild data-dropdown-trigger>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                    <MoreVertical className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white">
+                  <DropdownMenuItem onClick={() => setIsDetailOpen(true)}>
+                    <Eye className="w-4 h-4 mr-2" />
+                    상세보기
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onDelete(company.id)} className="text-red-600 focus:text-red-600">
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    삭제
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </CardHeader>
         
