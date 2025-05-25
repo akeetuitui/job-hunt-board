@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,7 +62,7 @@ const Settings = () => {
     }
   };
 
-  const handleNotificationChange = (key: keyof typeof settings.notifications, value: boolean) => {
+  const handleNotificationChange = (key: 'emailNotifications' | 'interviewReminders' | 'applicationDeadlines' | 'soundEnabled', value: boolean) => {
     const updatedNotifications = { ...settings.notifications, [key]: value };
     updateNotifications(updatedNotifications);
   };
