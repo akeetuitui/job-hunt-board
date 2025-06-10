@@ -23,6 +23,7 @@ const Header = () => {
     { name: "지원현황", href: "/dashboard" },
     { name: "통계", href: "/statistics" },
     { name: "일정", href: "/calendar" },
+    { name: "마이그레이션", href: "/migration" },
     { name: "설정", href: "/settings" },
   ];
 
