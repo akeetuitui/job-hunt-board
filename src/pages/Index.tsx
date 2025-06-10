@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -6,6 +7,8 @@ import Header from '@/components/Header';
 import KanbanBoard from '@/components/KanbanBoard';
 import ProfileSetupDialog from '@/components/ProfileSetupDialog';
 import { AddCompanyDialog } from '@/components/AddCompanyDialog';
+import { FirstApplicationToast } from '@/components/FirstApplicationToast';
+import { ProfileSetupToast } from '@/components/ProfileSetupToast';
 import { useCompanies } from '@/hooks/useCompanies';
 
 // Type definitions
@@ -51,9 +54,9 @@ const Index = () => {
     // 인증 상태가 로딩 중이면 기다림
     if (authLoading) return;
 
-    // 사용자가 로그인되지 않았으면 로그인 페이지로 리다이렉트
+    // 사용자가 로그인되지 않았으면 홈페이지로 리다이렉트 (랜딩페이지 표시)
     if (!user) {
-      navigate('/auth');
+      navigate('/');
       return;
     }
 
@@ -89,10 +92,10 @@ const Index = () => {
   // 인증 또는 프로필 로딩 중이면 로딩 표시
   if (authLoading || profileLoading || companiesLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/20 flex items-center justify-center">
+        <div className="text-center bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/20">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">로딩 중...</p>
+          <p className="mt-2 text-gray-600 font-medium">로딩 중...</p>
         </div>
       </div>
     );
@@ -105,14 +108,16 @@ const Index = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/20">
         <Header />
         <main className="container mx-auto px-4 py-8">
-          <KanbanBoard 
-            companies={companies}
-            onUpdateCompany={updateCompany}
-            onDeleteCompany={deleteCompany}
-          />
+          <div className="bg-white/40 backdrop-blur-sm rounded-2xl border border-white/30 shadow-xl">
+            <KanbanBoard 
+              companies={companies}
+              onUpdateCompany={updateCompany}
+              onDeleteCompany={deleteCompany}
+            />
+          </div>
         </main>
       </div>
 
@@ -126,6 +131,9 @@ const Index = () => {
         onClose={() => setShowAddCompanyDialog(false)}
         onAdd={handleAddCompany}
       />
+
+      <FirstApplicationToast />
+      <ProfileSetupToast />
     </>
   );
 };

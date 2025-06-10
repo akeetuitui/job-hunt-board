@@ -5,8 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useSecurityMonitoring } from "@/hooks/useSecurityMonitoring";
-import Landing from "./pages/Landing";
-import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
+import Index from "./pages/Index";
 import Statistics from "./pages/Statistics";
 import Calendar from "./pages/Calendar";
 import Migration from "./pages/Migration";
@@ -37,9 +37,9 @@ const AppContent = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Index />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/migration" element={<Migration />} />
