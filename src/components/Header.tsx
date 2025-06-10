@@ -70,7 +70,7 @@ const Header = () => {
                       : "text-gray-600"
                   )}
                 >
-                  {item.icon && <item.icon className="w-4 h-4" />}
+                  {'icon' in item && item.icon && <item.icon className="w-4 h-4" />}
                   {item.name}
                 </Link>
               ))}
