@@ -30,7 +30,7 @@ const Landing = () => {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20">
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-8 leading-tight">
+          <h1 className="text-5xl md:text-5xl font-extrabold text-gray-900 mb-8 leading-tight">
             취업 준비를{" "}
             <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               체계적으로
