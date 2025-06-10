@@ -27,7 +27,7 @@ interface CompanyDetailDialogProps {
   company: Company;
   isOpen: boolean;
   onClose: () => void;
-  onUpdate: (company: Company) => void;
+  onUpdate: (id: string, updates: Partial<Company>) => void;
 }
 
 export const CompanyDetailDialog = ({ 
@@ -51,7 +51,7 @@ export const CompanyDetailDialog = ({
   };
 
   const handleSave = () => {
-    onUpdate(formData);
+    onUpdate(company.id, formData);
     toast({
       title: "저장 완료",
       description: "기업 정보가 성공적으로 저장되었습니다.",
@@ -112,7 +112,9 @@ export const CompanyDetailDialog = ({
     }));
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | undefined | null) => {
+    if (!dateString) return '';
+    
     if (dateString.includes('T')) {
       // If it includes time, format with both date and time
       return new Date(dateString).toLocaleString('ko-KR', {

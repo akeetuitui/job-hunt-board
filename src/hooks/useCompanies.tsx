@@ -44,17 +44,24 @@ export const useCompanies = () => {
         throw error;
       }
 
-      // Sanitize data on the client side as an additional security layer
+      // Transform database data to match Company interface
       return data?.map(company => ({
-        ...company,
+        id: company.id,
         name: sanitizeHtml(company.name || ''),
         position: sanitizeHtml(company.position || ''),
-        description: sanitizeHtml(company.description || ''),
-        cover_letter_sections: company.cover_letter_sections?.map(section => ({
-          ...section,
+        positionType: company.position_type as Company['positionType'],
+        status: company.status as Company['status'],
+        deadline: company.deadline || undefined,
+        description: company.description ? sanitizeHtml(company.description) : undefined,
+        applicationLink: company.application_link || undefined,
+        coverLetter: company.cover_letter || undefined,
+        coverLetterSections: company.cover_letter_sections?.map(section => ({
+          id: section.id,
           title: sanitizeHtml(section.title || ''),
-          content: sanitizeHtml(section.content || '')
-        }))
+          content: sanitizeHtml(section.content || ''),
+          maxLength: section.max_length || undefined
+        })) || [],
+        createdAt: company.created_at
       })) as Company[] || [];
     },
     enabled: !!user,
@@ -92,12 +99,16 @@ export const useCompanies = () => {
         throw new Error(validation.error);
       }
 
-      // Sanitize input data
+      // Sanitize input data and transform to database format
       const sanitizedCompany = {
-        ...company,
         name: sanitizeHtml(company.name),
         position: sanitizeHtml(company.position),
+        position_type: company.positionType,
+        status: company.status,
+        deadline: company.deadline || null,
         description: company.description ? sanitizeHtml(company.description) : null,
+        application_link: company.applicationLink || null,
+        cover_letter: company.coverLetter || null,
         user_id: user.id
       };
 
@@ -152,11 +163,16 @@ export const useCompanies = () => {
         }
       }
 
-      // Sanitize updates
-      const sanitizedUpdates = { ...updates };
+      // Sanitize updates and transform to database format
+      const sanitizedUpdates: any = {};
       if (updates.name) sanitizedUpdates.name = sanitizeHtml(updates.name);
       if (updates.position) sanitizedUpdates.position = sanitizeHtml(updates.position);
-      if (updates.description) sanitizedUpdates.description = sanitizeHtml(updates.description);
+      if (updates.positionType) sanitizedUpdates.position_type = updates.positionType;
+      if (updates.status) sanitizedUpdates.status = updates.status;
+      if (updates.deadline !== undefined) sanitizedUpdates.deadline = updates.deadline;
+      if (updates.description !== undefined) sanitizedUpdates.description = updates.description ? sanitizeHtml(updates.description) : null;
+      if (updates.applicationLink !== undefined) sanitizedUpdates.application_link = updates.applicationLink;
+      if (updates.coverLetter !== undefined) sanitizedUpdates.cover_letter = updates.coverLetter;
 
       const { data, error } = await supabase
         .from('companies')
@@ -227,7 +243,7 @@ export const useCompanies = () => {
     companies,
     isLoading,
     addCompany: addCompanyMutation.mutate,
-    updateCompany: updateCompanyMutation.mutate,
+    updateCompany: (id: string, updates: Partial<Company>) => updateCompanyMutation.mutate({ id, updates }),
     deleteCompany: deleteCompanyMutation.mutate,
     isAddingCompany: addCompanyMutation.isPending,
     isUpdatingCompany: updateCompanyMutation.isPending,
