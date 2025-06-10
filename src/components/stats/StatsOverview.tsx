@@ -39,25 +39,28 @@ export const StatsOverview = ({ companies }: StatsOverviewProps) => {
       title: "총 지원건수",
       value: totalApplications,
       icon: Briefcase,
-      color: "text-slate-600",
-      bgColor: "bg-slate-50",
-      borderColor: "border-slate-100"
+      color: "text-slate-700",
+      bgColor: "bg-gradient-to-br from-slate-100/80 to-slate-200/60",
+      borderColor: "border-slate-200/50",
+      iconBg: "bg-gradient-to-br from-slate-500 to-slate-600"
     },
     {
       title: "서류합격률",
       value: `${documentPassRate}%`,
       icon: FileCheck,
-      color: "text-indigo-600",
-      bgColor: "bg-indigo-50",
-      borderColor: "border-indigo-100"
+      color: "text-indigo-700",
+      bgColor: "bg-gradient-to-br from-indigo-100/80 to-blue-200/60",
+      borderColor: "border-indigo-200/50",
+      iconBg: "bg-gradient-to-br from-indigo-500 to-blue-600"
     },
     {
       title: "최종합격률",
       value: `${finalPassRate}%`,
       icon: CheckCircle2,
-      color: "text-emerald-600",
-      bgColor: "bg-emerald-50",
-      borderColor: "border-emerald-100"
+      color: "text-emerald-700",
+      bgColor: "bg-gradient-to-br from-emerald-100/80 to-green-200/60",
+      borderColor: "border-emerald-200/50",
+      iconBg: "bg-gradient-to-br from-emerald-500 to-green-600"
     }
   ];
 
@@ -66,16 +69,16 @@ export const StatsOverview = ({ companies }: StatsOverviewProps) => {
       {stats.map((stat) => (
         <Card 
           key={stat.title} 
-          className={`border ${stat.borderColor} shadow-sm hover:shadow transition-shadow`}
+          className={`border ${stat.borderColor} shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/60 backdrop-blur-sm hover:scale-105 transform`}
         >
           <CardContent className="p-5">
             <div className="flex justify-between items-center">
               <div>
-                <p className="text-sm font-medium text-gray-500">{stat.title}</p>
-                <h3 className="text-2xl font-bold mt-2">{stat.value}</h3>
+                <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                <h3 className={`text-2xl font-bold mt-2 ${stat.color}`}>{stat.value}</h3>
               </div>
-              <div className={`p-3 rounded-full ${stat.bgColor}`}>
-                <stat.icon className={`w-6 h-6 ${stat.color}`} />
+              <div className={`p-3 rounded-xl shadow-lg ${stat.iconBg}`}>
+                <stat.icon className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>

@@ -27,11 +27,11 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
+    <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-white/20 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
-            <Link to="/dashboard" className="text-xl font-bold text-indigo-600">
+            <Link to="/dashboard" className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               잡트래커
             </Link>
             <nav className="hidden md:flex space-x-6">
@@ -40,9 +40,9 @@ const Header = () => {
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    "text-sm font-medium transition-colors hover:text-indigo-600",
+                    "text-sm font-medium transition-all duration-300 hover:text-indigo-600 px-3 py-2 rounded-lg hover:bg-white/50 backdrop-blur-sm",
                     location.pathname === item.href
-                      ? "text-indigo-600 border-b-2 border-indigo-600 pb-4"
+                      ? "text-indigo-600 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200/50 shadow-sm"
                       : "text-gray-600"
                   )}
                 >
@@ -54,7 +54,7 @@ const Header = () => {
           
           <div className="flex items-center space-x-4">
             <Link to="/">
-              <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+              <Button variant="ghost" size="sm" className="flex items-center space-x-2 hover:bg-white/50 backdrop-blur-sm transition-all duration-300">
                 <Home className="w-4 h-4" />
                 <span className="hidden sm:inline">소개</span>
               </Button>
@@ -63,13 +63,13 @@ const Header = () => {
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                  <Button variant="ghost" size="sm" className="flex items-center space-x-2 hover:bg-white/50 backdrop-blur-sm transition-all duration-300">
                     <User className="w-4 h-4" />
                     <span className="hidden sm:inline">{user.email}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-white">
-                  <DropdownMenuItem onClick={handleSignOut} className="flex items-center">
+                <DropdownMenuContent align="end" className="bg-white/90 backdrop-blur-md border border-white/20 shadow-xl">
+                  <DropdownMenuItem onClick={handleSignOut} className="flex items-center hover:bg-white/50 transition-all duration-300">
                     <LogOut className="w-4 h-4 mr-2" />
                     로그아웃
                   </DropdownMenuItem>

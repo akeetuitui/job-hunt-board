@@ -6,7 +6,7 @@ import LandingHeader from "@/components/LandingHeader";
 import DemoKanbanBoard from "@/components/DemoKanbanBoard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Target, BarChart3, Calendar, ArrowRight, Users } from "lucide-react";
+import { CheckCircle, Target, BarChart3, Calendar, ArrowRight } from "lucide-react";
 
 const Landing = () => {
   const { user, loading } = useAuth();
@@ -43,25 +43,14 @@ const Landing = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             {!user ? (
-              <>
-                <Button 
-                  size="lg" 
-                  className="text-lg px-10 py-4 h-auto rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700" 
-                  onClick={() => navigate('/auth')}
-                >
-                  무료로 시작하기
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="text-lg px-10 py-4 h-auto rounded-xl border-2 hover:bg-gray-50 transition-all duration-300"
-                  onClick={() => navigate('/auth')}
-                >
-                  <Users className="w-5 h-5 mr-2" />
-                  회원가입하기
-                </Button>
-              </>
+              <Button 
+                size="lg" 
+                className="text-lg px-10 py-4 h-auto rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700" 
+                onClick={() => navigate('/auth')}
+              >
+                무료로 시작하기
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
             ) : (
               <Button 
                 size="lg" 
@@ -170,7 +159,7 @@ const Landing = () => {
               지금 시작해서 체계적인 취업 준비를 경험하세요
             </h2>
             <p className="text-xl text-indigo-100 mb-10 font-medium">
-              수천 명의 취업 준비생들이 이미 잡트래커와 함께하고 있습니다
+              많은 취업 준비생들이 이미 잡트래커와 함께하고 있습니다
             </p>
             <Button 
               size="lg" 
