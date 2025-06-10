@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LogIn, UserPlus, User } from "lucide-react";
+import { LogIn, UserPlus, User, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -29,19 +29,28 @@ const LandingHeader = () => {
           
           <div className="flex items-center space-x-4">
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    <span className="hidden sm:inline">{user.email}</span>
+              <>
+                <Link to="/dashboard">
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <LayoutDashboard className="w-4 h-4" />
+                    대시보드
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-white">
-                  <DropdownMenuItem onClick={handleSignOut} className="flex items-center">
-                    로그아웃
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                </Link>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      <span className="hidden sm:inline">{user.email}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-white">
+                    <DropdownMenuItem onClick={handleSignOut} className="flex items-center">
+                      로그아웃
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             ) : (
               <>
                 <Link to="/auth">
