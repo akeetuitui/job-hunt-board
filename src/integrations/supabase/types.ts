@@ -134,6 +134,45 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          is_global: boolean | null
+          message: string
+          target_audience: string | null
+          title: string
+          type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_global?: boolean | null
+          message: string
+          target_audience?: string | null
+          title: string
+          type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_global?: boolean | null
+          message?: string
+          target_audience?: string | null
+          title?: string
+          type?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -163,6 +202,41 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      user_notification_status: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          notification_id: string
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          notification_id: string
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          notification_id?: string
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_notification_status_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

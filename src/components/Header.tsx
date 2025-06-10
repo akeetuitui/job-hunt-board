@@ -2,8 +2,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Home, Bell } from "lucide-react";
+import { LogOut, User, Home, Bell, Check } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useNotifications } from "@/hooks/useNotifications";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,13 @@ import { Badge } from "@/components/ui/badge";
 const Header = () => {
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { 
+    notifications, 
+    unreadCount, 
+    markAsRead, 
+    markAllAsRead, 
+    isMarkingAllAsRead 
+  } = useNotifications();
 
   const handleSignOut = async () => {
     await signOut();
@@ -28,33 +36,6 @@ const Header = () => {
     { name: "일정", href: "/calendar" },
     { name: "설정", href: "/settings" },
   ];
-
-  // 임시 공지사항 데이터 (추후 API로 대체)
-  const notifications = [
-    {
-      id: 1,
-      title: "새로운 기능 업데이트",
-      message: "칸반보드에 필터 기능이 추가되었습니다.",
-      isRead: false,
-      createdAt: "2024-01-15",
-    },
-    {
-      id: 2,
-      title: "시스템 점검 안내",
-      message: "1월 20일 새벽 2시~4시 시스템 점검이 예정되어 있습니다.",
-      isRead: false,
-      createdAt: "2024-01-14",
-    },
-    {
-      id: 3,
-      title: "취업 준비 팁",
-      message: "면접 일정 관리 기능을 활용해보세요!",
-      isRead: true,
-      createdAt: "2024-01-13",
-    },
-  ];
-
-  const unreadCount = notifications.filter(n => !n.isRead).length;
 
   return (
     <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-white/20 sticky top-0 z-50">
@@ -107,7 +88,21 @@ const Header = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-80 bg-white/90 backdrop-blur-md border border-white/20 shadow-xl">
-                    <DropdownMenuLabel className="font-semibold">알림</DropdownMenuLabel>
+                    <div className="flex items-center justify-between p-3">
+                      <DropdownMenuLabel className="font-semibold p-0">알림</DropdownMenuLabel>
+                      {unreadCount > 0 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={markAllAsRead}
+                          disabled={isMarkingAllAsRead}
+                          className="h-auto p-1 text-xs text-indigo-600 hover:text-indigo-700"
+                        >
+                          <Check className="w-3 h-3 mr-1" />
+                          모두 읽음
+                        </Button>
+                      )}
+                    </div>
                     <DropdownMenuSeparator />
                     {notifications.length === 0 ? (
                       <div className="p-4 text-center text-gray-500 text-sm">
@@ -119,17 +114,18 @@ const Header = () => {
                           <DropdownMenuItem 
                             key={notification.id}
                             className="flex flex-col items-start p-4 hover:bg-white/50 transition-all duration-300 cursor-pointer"
+                            onClick={() => !notification.is_read && markAsRead(notification.id)}
                           >
                             <div className="flex items-start justify-between w-full">
                               <div className="flex-1">
                                 <div className="flex items-center gap-2">
                                   <span className={cn(
                                     "font-medium text-sm",
-                                    !notification.isRead && "text-indigo-600"
+                                    !notification.is_read && "text-indigo-600"
                                   )}>
                                     {notification.title}
                                   </span>
-                                  {!notification.isRead && (
+                                  {!notification.is_read && (
                                     <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
                                   )}
                                 </div>
@@ -137,7 +133,7 @@ const Header = () => {
                                   {notification.message}
                                 </p>
                                 <span className="text-xs text-gray-400 mt-1">
-                                  {notification.createdAt}
+                                  {new Date(notification.created_at).toLocaleDateString('ko-KR')}
                                 </span>
                               </div>
                             </div>
@@ -145,10 +141,6 @@ const Header = () => {
                         ))}
                       </div>
                     )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-center text-indigo-600 hover:bg-white/50 transition-all duration-300">
-                      모든 알림 보기
-                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
