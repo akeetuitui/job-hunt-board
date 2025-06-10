@@ -179,7 +179,7 @@ const Auth = () => {
 
           <Card className="w-full">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-gray-900">JobTracker</CardTitle>
+              <CardTitle className="text-2xl font-bold text-gray-900">잡트래커</CardTitle>
               <p className="text-gray-600">취업 지원 현황을 효율적으로 관리하세요</p>
             </CardHeader>
             <CardContent>

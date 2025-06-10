@@ -2,7 +2,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Home } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -32,7 +32,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
             <Link to="/dashboard" className="text-xl font-bold text-indigo-600">
-              JobTracker
+              잡트래커
             </Link>
             <nav className="hidden md:flex space-x-6">
               {navigation.map((item) => (
@@ -52,22 +52,31 @@ const Header = () => {
             </nav>
           </div>
           
-          {user && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                  <User className="w-4 h-4" />
-                  <span className="hidden sm:inline">{user.email}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white">
-                <DropdownMenuItem onClick={handleSignOut} className="flex items-center">
-                  <LogOut className="w-4 h-4 mr-2" />
-                  로그아웃
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+          <div className="flex items-center space-x-4">
+            <Link to="/">
+              <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                <Home className="w-4 h-4" />
+                <span className="hidden sm:inline">소개</span>
+              </Button>
+            </Link>
+            
+            {user && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                    <User className="w-4 h-4" />
+                    <span className="hidden sm:inline">{user.email}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white">
+                  <DropdownMenuItem onClick={handleSignOut} className="flex items-center">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    로그아웃
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
       </div>
     </header>

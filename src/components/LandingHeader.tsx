@@ -10,7 +10,7 @@ const LandingHeader = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link to="/" className="text-xl font-bold text-indigo-600">
-              JobTracker
+              잡트래커
             </Link>
           </div>
           
