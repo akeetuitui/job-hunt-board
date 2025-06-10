@@ -83,7 +83,7 @@ export const CompanyCard = ({
   };
 
   const saveDeadline = () => {
-    onUpdate({ ...company, deadline });
+    onUpdate(company.id, { deadline });
     setIsEditingDeadline(false);
   };
 
