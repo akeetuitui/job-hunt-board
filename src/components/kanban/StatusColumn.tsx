@@ -18,7 +18,7 @@ interface StatusColumnProps {
   onDragLeave: () => void;
   onDrop: (e: React.DragEvent, status: Company["status"]) => void;
   onEditTitle: (status: string, newTitle: string) => void;
-  onUpdateCompany: (company: Company) => void;
+  onUpdateCompany: (id: string, updates: Partial<Company>) => void;
   onDeleteCompany: (id: string) => void;
   onDragStart: (e: React.DragEvent, companyId: string) => void;
   draggedItem: string | null;
@@ -47,7 +47,7 @@ export const StatusColumn = ({
     <div
       className={cn(
         "rounded-xl border p-3 min-h-[520px] min-w-[300px] transition-all duration-200 flex flex-col shadow-sm",
-        statusConfig.color, // Apply the color directly from statusConfig
+        statusConfig.color,
         isDraggingOver && `ring-2 ${statusConfig.shadow} bg-opacity-70`
       )}
       onDragOver={(e) => onDragOver(e, status)}

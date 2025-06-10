@@ -63,13 +63,13 @@ export const useKanbanState = () => {
     setIsDraggingOver(null);
   };
 
-  const handleDrop = (e: React.DragEvent, status: Company["status"], companies: Company[], onUpdateCompany: (company: Company) => void) => {
+  const handleDrop = (e: React.DragEvent, status: Company["status"], companies: Company[], onUpdateCompany: (id: string, updates: Partial<Company>) => void) => {
     e.preventDefault();
     
     if (draggedItem) {
       const company = companies.find(c => c.id === draggedItem);
       if (company && company.status !== status) {
-        onUpdateCompany({ ...company, status });
+        onUpdateCompany(company.id, { status });
       }
     }
     
