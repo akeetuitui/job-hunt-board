@@ -7,6 +7,8 @@ import Header from '@/components/Header';
 import KanbanBoard from '@/components/KanbanBoard';
 import ProfileSetupDialog from '@/components/ProfileSetupDialog';
 import { AddCompanyDialog } from '@/components/AddCompanyDialog';
+import { FirstApplicationToast } from '@/components/FirstApplicationToast';
+import { ProfileSetupToast } from '@/components/ProfileSetupToast';
 import { useCompanies } from '@/hooks/useCompanies';
 
 // Type definitions
@@ -129,6 +131,9 @@ const Dashboard = () => {
         onClose={() => setShowAddCompanyDialog(false)}
         onAdd={handleAddCompany}
       />
+
+      <FirstApplicationToast />
+      <ProfileSetupToast />
     </>
   );
 };

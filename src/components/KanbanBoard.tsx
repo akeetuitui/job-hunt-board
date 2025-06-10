@@ -1,8 +1,8 @@
 
-import { Company } from "@/pages/Index";
-import { StatusColumn } from "./kanban/StatusColumn";
 import { useKanbanState } from "@/hooks/useKanbanState";
-import { ScrollArea } from "./ui/scroll-area";
+import { StatusColumn } from "./kanban/StatusColumn";
+import { Company } from "@/pages/Index";
+import { MigrationInfoButton } from "./MigrationInfoButton";
 
 interface KanbanBoardProps {
   companies: Company[];
@@ -22,48 +22,41 @@ const KanbanBoard = ({ companies, onUpdateCompany, onDeleteCompany }: KanbanBoar
     handleEditStatusTitle
   } = useKanbanState();
 
-  const handleDropWrapper = (e: React.DragEvent, status: Company["status"]) => {
-    handleDrop(e, status, companies, onUpdateCompany);
-  };
-
   const handleAddCompany = () => {
-    window.dispatchEvent(new CustomEvent('openAddCompanyDialog'));
+    window.dispatchEvent(new Event('openAddCompanyDialog'));
   };
 
-  // Status types to ensure we render all columns
-  const statuses: Company["status"][] = [
-    "pending", 
-    "applied", 
-    "aptitude", 
-    "interview", 
-    "passed", 
-    "rejected"
-  ];
+  const statuses: Company["status"][] = ["pending", "applied", "aptitude", "interview", "passed", "rejected"];
 
   return (
-    <div className="mt-6 overflow-hidden">
-      <ScrollArea className="w-full" orientation="horizontal">
-        <div className="flex gap-4 pb-4 px-1 min-w-max">
-          {statuses.map((status) => (
-            <StatusColumn
-              key={status}
-              status={status}
-              statusConfig={statusConfig[status]}
-              companies={companies}
-              isDraggingOver={isDraggingOver === status}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDropWrapper}
-              onEditTitle={handleEditStatusTitle}
-              onUpdateCompany={onUpdateCompany}
-              onDeleteCompany={onDeleteCompany}
-              onDragStart={handleDragStart}
-              draggedItem={draggedItem}
-              onAddCompany={handleAddCompany}
-            />
-          ))}
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-gray-900">지원 현황 관리</h2>
+          <MigrationInfoButton />
         </div>
-      </ScrollArea>
+      </div>
+      
+      <div className="flex gap-6 overflow-x-auto pb-4">
+        {statuses.map((status) => (
+          <StatusColumn
+            key={status}
+            status={status}
+            statusConfig={statusConfig[status]}
+            companies={companies}
+            isDraggingOver={isDraggingOver === status}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, status, companies, onUpdateCompany)}
+            onEditTitle={handleEditStatusTitle}
+            onUpdateCompany={onUpdateCompany}
+            onDeleteCompany={onDeleteCompany}
+            onDragStart={handleDragStart}
+            draggedItem={draggedItem}
+            onAddCompany={handleAddCompany}
+          />
+        ))}
+      </div>
     </div>
   );
 };

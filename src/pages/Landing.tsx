@@ -38,7 +38,8 @@ const Landing = () => {
             관리하세요
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-12 leading-relaxed font-medium">
-            잡트래커와 함께 지원 현황을 한눈에 파악하고, 
+            잡트래커와 함께 지원 현황을 한눈에 파악하고,
+            <br />
             성공적인 취업을 위한 모든 과정을 체계적으로 관리해보세요.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
