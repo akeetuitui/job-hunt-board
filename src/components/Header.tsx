@@ -15,6 +15,13 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { LucideIcon } from "lucide-react";
+
+type NavigationItem = {
+  name: string;
+  href: string;
+  icon?: LucideIcon;
+};
 
 const Header = () => {
   const location = useLocation();
@@ -36,7 +43,7 @@ const Header = () => {
     markAllAsRead();
   };
 
-  const navigation = [
+  const navigation: NavigationItem[] = [
     { name: "지원현황", href: "/dashboard" },
     { name: "통계", href: "/statistics" },
     { name: "일정", href: "/calendar" },
@@ -44,7 +51,7 @@ const Header = () => {
   ];
 
   // 관리자에게만 관리자 메뉴 표시
-  const adminNavigation = isAdmin ? [
+  const adminNavigation: NavigationItem[] = isAdmin ? [
     { name: "관리자", href: "/admin", icon: Shield },
   ] : [];
 
@@ -59,21 +66,24 @@ const Header = () => {
               잡트래커
             </Link>
             <nav className="hidden md:flex space-x-6">
-              {allNavigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "text-sm font-medium transition-all duration-300 hover:text-indigo-600 px-3 py-2 rounded-lg hover:bg-white/50 backdrop-blur-sm flex items-center gap-2",
-                    location.pathname === item.href
-                      ? "text-indigo-600 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200/50 shadow-sm"
-                      : "text-gray-600"
-                  )}
-                >
-                  {'icon' in item && item.icon && <item.icon className="w-4 h-4" />}
-                  {item.name}
-                </Link>
-              ))}
+              {allNavigation.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn(
+                      "text-sm font-medium transition-all duration-300 hover:text-indigo-600 px-3 py-2 rounded-lg hover:bg-white/50 backdrop-blur-sm flex items-center gap-2",
+                      location.pathname === item.href
+                        ? "text-indigo-600 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200/50 shadow-sm"
+                        : "text-gray-600"
+                    )}
+                  >
+                    {IconComponent && <IconComponent className="w-4 h-4" />}
+                    {item.name}
+                  </Link>
+                );
+              })}
             </nav>
           </div>
           
