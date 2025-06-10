@@ -30,6 +30,10 @@ const Header = () => {
     await signOut();
   };
 
+  const handleMarkAllAsRead = () => {
+    markAllAsRead();
+  };
+
   const navigation = [
     { name: "지원현황", href: "/dashboard" },
     { name: "통계", href: "/statistics" },
@@ -94,7 +98,7 @@ const Header = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={markAllAsRead}
+                          onClick={handleMarkAllAsRead}
                           disabled={isMarkingAllAsRead}
                           className="h-auto p-1 text-xs text-indigo-600 hover:text-indigo-700"
                         >
