@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Company, PositionType } from "@/pages/Index";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -19,7 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface CompanyCardProps {
   company: Company;
-  onUpdate: (company: Company) => void;
+  onUpdate: (id: string, updates: Partial<Company>) => void;
   onDelete: (id: string) => void;
   onDragStart: (e: React.DragEvent) => void;
   isDragging: boolean;

@@ -6,7 +6,7 @@ import { MigrationInfoButton } from "./MigrationInfoButton";
 
 interface KanbanBoardProps {
   companies: Company[];
-  onUpdateCompany: (company: Company) => void;
+  onUpdateCompany: (id: string, updates: Partial<Company>) => void;
   onDeleteCompany: (id: string) => void;
 }
 
