@@ -103,7 +103,7 @@ const Landing = () => {
             </CardHeader>
             <CardContent>
               <CardDescription className="text-base leading-relaxed">
-                지원 현황과 성공률을 분석하여
+                지원률과 성공률을 분석하여
                 <br />
                 전략적인 취업 준비가 가능합니다.
               </CardDescription>
@@ -135,9 +135,9 @@ const Landing = () => {
               <CardDescription className="text-base leading-relaxed">
                 지원부터 최종 합격까지
                 <br />
-                모든 단계의 진행 상황을 체계적으로
+                모든 단계의 진행 상황을
                 <br />
-                기록하세요.
+                체계적으로 기록하세요.
               </CardDescription>
             </CardContent>
           </Card>
