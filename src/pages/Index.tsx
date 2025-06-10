@@ -42,6 +42,8 @@ const Index = () => {
   const [showAddCompanyDialog, setShowAddCompanyDialog] = useState(false);
   const navigate = useNavigate();
 
+  console.log('Index component - user:', user, 'authLoading:', authLoading);
+
   const {
     companies,
     isLoading: companiesLoading,
@@ -51,11 +53,13 @@ const Index = () => {
   } = useCompanies();
 
   useEffect(() => {
+    console.log('Index useEffect - user:', user, 'authLoading:', authLoading);
     // 인증 상태가 로딩 중이면 기다림
     if (authLoading) return;
 
     // 사용자가 로그인되지 않았으면 홈페이지로 리다이렉트 (랜딩페이지 표시)
     if (!user) {
+      console.log('No user found, redirecting to home');
       navigate('/');
       return;
     }
@@ -65,6 +69,7 @@ const Index = () => {
 
     // 사용자는 로그인되어 있지만 프로필 정보가 없거나 불완전하면 프로필 설정 다이얼로그 표시
     if (profile && (!profile.university || !profile.major)) {
+      console.log('Profile incomplete, showing setup dialog');
       setShowProfileSetup(true);
     }
   }, [user, profile, authLoading, profileLoading, navigate]);
@@ -91,6 +96,7 @@ const Index = () => {
 
   // 인증 또는 프로필 로딩 중이면 로딩 표시
   if (authLoading || profileLoading || companiesLoading) {
+    console.log('Index showing loading screen');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/20 flex items-center justify-center">
         <div className="text-center bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/20">
@@ -103,9 +109,11 @@ const Index = () => {
 
   // 사용자가 로그인되지 않았으면 아무것도 렌더링하지 않음 (useEffect에서 리다이렉트)
   if (!user) {
+    console.log('No user, rendering null');
     return null;
   }
 
+  console.log('Index rendering main dashboard');
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/20">
