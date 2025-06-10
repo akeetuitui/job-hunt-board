@@ -1,25 +1,42 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Company } from '@/pages/Index';
+import { 
+  validateCompanyName, 
+  validatePosition, 
+  validateDescription, 
+  validateApplicationLink,
+  sanitizeHtml 
+} from '@/utils/security';
+import type { Company } from '@/pages/Index';
 
 export const useCompanies = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch companies from Supabase
-  const { data: companies = [], isLoading, error } = useQuery({
+  // Fetch companies with security validation
+  const { data: companies = [], isLoading } = useQuery({
     queryKey: ['companies', user?.id],
     queryFn: async () => {
       if (!user) return [];
       
       const { data, error } = await supabase
         .from('companies')
-        .select('*')
+        .select(`
+          *,
+          cover_letter_sections (
+            id,
+            title,
+            content,
+            max_length,
+            sort_order
+          )
+        `)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -27,128 +44,180 @@ export const useCompanies = () => {
         throw error;
       }
 
+      // Sanitize data on the client side as an additional security layer
       return data?.map(company => ({
-        id: company.id,
-        name: company.name,
-        position: company.position,
-        positionType: company.position_type as Company['positionType'],
-        status: company.status as Company['status'],
-        deadline: company.deadline || undefined,
-        description: company.description || undefined,
-        applicationLink: company.application_link || undefined,
-        coverLetter: company.cover_letter || undefined,
-        createdAt: company.created_at?.split('T')[0] || new Date().toISOString().split('T')[0]
-      })) || [];
+        ...company,
+        name: sanitizeHtml(company.name || ''),
+        position: sanitizeHtml(company.position || ''),
+        description: sanitizeHtml(company.description || ''),
+        cover_letter_sections: company.cover_letter_sections?.map(section => ({
+          ...section,
+          title: sanitizeHtml(section.title || ''),
+          content: sanitizeHtml(section.content || '')
+        }))
+      })) as Company[] || [];
     },
     enabled: !!user,
   });
 
-  // Add company mutation
+  // Secure company validation
+  const validateCompanyData = (company: Omit<Company, "id" | "createdAt">) => {
+    const nameValidation = validateCompanyName(company.name);
+    if (!nameValidation.isValid) return nameValidation;
+
+    const positionValidation = validatePosition(company.position);
+    if (!positionValidation.isValid) return positionValidation;
+
+    if (company.description) {
+      const descValidation = validateDescription(company.description);
+      if (!descValidation.isValid) return descValidation;
+    }
+
+    if (company.applicationLink) {
+      const linkValidation = validateApplicationLink(company.applicationLink);
+      if (!linkValidation.isValid) return linkValidation;
+    }
+
+    return { isValid: true };
+  };
+
+  // Add company with security validation
   const addCompanyMutation = useMutation({
-    mutationFn: async (newCompany: Omit<Company, "id" | "createdAt">) => {
+    mutationFn: async (company: Omit<Company, "id" | "createdAt">) => {
       if (!user) throw new Error('User not authenticated');
-      
+
+      // Validate input data
+      const validation = validateCompanyData(company);
+      if (!validation.isValid) {
+        throw new Error(validation.error);
+      }
+
+      // Sanitize input data
+      const sanitizedCompany = {
+        ...company,
+        name: sanitizeHtml(company.name),
+        position: sanitizeHtml(company.position),
+        description: company.description ? sanitizeHtml(company.description) : null,
+        user_id: user.id
+      };
+
       const { data, error } = await supabase
         .from('companies')
-        .insert({
-          user_id: user.id,
-          name: newCompany.name,
-          position: newCompany.position,
-          position_type: newCompany.positionType || null,
-          status: newCompany.status,
-          deadline: newCompany.deadline || null,
-          description: newCompany.description || null,
-          application_link: newCompany.applicationLink || null,
-          cover_letter: newCompany.coverLetter || null,
-        })
+        .insert(sanitizedCompany)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error adding company:', error);
+        throw error;
+      }
+
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['companies'] });
       toast({
-        title: "기업 추가 완료",
-        description: "새로운 기업이 성공적으로 추가되었습니다.",
+        title: "회사 추가됨",
+        description: "새로운 회사가 성공적으로 추가되었습니다.",
       });
     },
     onError: (error) => {
-      console.error('Error adding company:', error);
+      console.error('Add company error:', error);
       toast({
         title: "오류",
-        description: "기업 추가 중 오류가 발생했습니다.",
+        description: error.message || "회사 추가 중 오류가 발생했습니다.",
         variant: "destructive",
       });
     },
   });
 
-  // Update company mutation
+  // Update company with security validation
   const updateCompanyMutation = useMutation({
-    mutationFn: async (updatedCompany: Company) => {
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<Company> }) => {
       if (!user) throw new Error('User not authenticated');
-      
+
+      // Validate updated data
+      if (updates.name || updates.position || updates.description || updates.applicationLink) {
+        const tempCompany = {
+          name: updates.name || '',
+          position: updates.position || '',
+          description: updates.description,
+          applicationLink: updates.applicationLink,
+          status: updates.status || 'pending'
+        } as Omit<Company, "id" | "createdAt">;
+
+        const validation = validateCompanyData(tempCompany);
+        if (!validation.isValid) {
+          throw new Error(validation.error);
+        }
+      }
+
+      // Sanitize updates
+      const sanitizedUpdates = { ...updates };
+      if (updates.name) sanitizedUpdates.name = sanitizeHtml(updates.name);
+      if (updates.position) sanitizedUpdates.position = sanitizeHtml(updates.position);
+      if (updates.description) sanitizedUpdates.description = sanitizeHtml(updates.description);
+
       const { data, error } = await supabase
         .from('companies')
-        .update({
-          name: updatedCompany.name,
-          position: updatedCompany.position,
-          position_type: updatedCompany.positionType || null,
-          status: updatedCompany.status,
-          deadline: updatedCompany.deadline || null,
-          description: updatedCompany.description || null,
-          application_link: updatedCompany.applicationLink || null,
-          cover_letter: updatedCompany.coverLetter || null,
-        })
-        .eq('id', updatedCompany.id)
+        .update(sanitizedUpdates)
+        .eq('id', id)
+        .eq('user_id', user.id) // Ensure user can only update their own companies
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating company:', error);
+        throw error;
+      }
+
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['companies'] });
       toast({
-        title: "업데이트 완료",
-        description: "기업 정보가 성공적으로 업데이트되었습니다.",
+        title: "회사 정보 업데이트됨",
+        description: "회사 정보가 성공적으로 업데이트되었습니다.",
       });
     },
     onError: (error) => {
-      console.error('Error updating company:', error);
+      console.error('Update company error:', error);
       toast({
         title: "오류",
-        description: "기업 정보 업데이트 중 오류가 발생했습니다.",
+        description: error.message || "회사 정보 업데이트 중 오류가 발생했습니다.",
         variant: "destructive",
       });
     },
   });
 
-  // Delete company mutation
+  // Delete company
   const deleteCompanyMutation = useMutation({
-    mutationFn: async (companyId: string) => {
+    mutationFn: async (id: string) => {
       if (!user) throw new Error('User not authenticated');
-      
+
       const { error } = await supabase
         .from('companies')
         .delete()
-        .eq('id', companyId);
+        .eq('id', id)
+        .eq('user_id', user.id); // Ensure user can only delete their own companies
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting company:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['companies'] });
       toast({
-        title: "삭제 완료",
-        description: "기업이 성공적으로 삭제되었습니다.",
+        title: "회사 삭제됨",
+        description: "회사가 성공적으로 삭제되었습니다.",
       });
     },
     onError: (error) => {
-      console.error('Error deleting company:', error);
+      console.error('Delete company error:', error);
       toast({
         title: "오류",
-        description: "기업 삭제 중 오류가 발생했습니다.",
+        description: "회사 삭제 중 오류가 발생했습니다.",
         variant: "destructive",
       });
     },
@@ -157,7 +226,6 @@ export const useCompanies = () => {
   return {
     companies,
     isLoading,
-    error,
     addCompany: addCompanyMutation.mutate,
     updateCompany: updateCompanyMutation.mutate,
     deleteCompany: deleteCompanyMutation.mutate,
