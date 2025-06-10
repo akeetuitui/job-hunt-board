@@ -49,6 +49,14 @@ const MigrationUploadDialog = () => {
     }
   };
 
+  const handleFileButtonClick = () => {
+    // 숨겨진 파일 input을 직접 클릭
+    const fileInput = document.getElementById('file-upload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  };
+
   const handleUpload = async () => {
     if (!file || !user) return;
 
@@ -113,19 +121,25 @@ const MigrationUploadDialog = () => {
               엑셀(.xlsx, .xls), PDF(.pdf), CSV(.csv) 파일을 지원합니다
             </p>
             
-            <Label htmlFor="file-upload" className="cursor-pointer">
-              <Input
-                id="file-upload"
-                type="file"
-                accept=".xlsx,.xls,.pdf,.csv"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              <Button type="button" variant="outline" className="w-full">
-                <Upload className="w-4 h-4 mr-2" />
-                파일 선택
-              </Button>
-            </Label>
+            {/* 숨겨진 파일 input */}
+            <Input
+              id="file-upload"
+              type="file"
+              accept=".xlsx,.xls,.pdf,.csv"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            
+            {/* 클릭 가능한 버튼 */}
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="w-full"
+              onClick={handleFileButtonClick}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              파일 선택
+            </Button>
             
             {file && (
               <div className="mt-3 p-2 bg-white/80 rounded border">

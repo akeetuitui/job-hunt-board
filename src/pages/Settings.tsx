@@ -6,13 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Bell, Download, UserX, Shield } from "lucide-react";
+import { Bell, Download, UserX, Shield, Upload, Database } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useSettings, type NotificationSettings } from "@/hooks/useSettings";
 import { useAuth } from "@/hooks/useAuth";
 import { useCompanies } from "@/hooks/useCompanies";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
 
 const Settings = () => {
   const { toast } = useToast();
@@ -229,6 +230,38 @@ const Settings = () => {
                 </div>
               </div>
               <Button onClick={handleProfileSave}>프로필 저장</Button>
+            </CardContent>
+          </Card>
+
+          {/* 데이터 마이그레이션 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Database className="w-5 h-5" />
+                데이터 마이그레이션
+              </CardTitle>
+              <CardDescription>
+                기존에 관리하던 지원현황 데이터를 잡트래커로 이전하세요
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200/50">
+                <h4 className="font-medium text-indigo-900 mb-2">📊 지원현황 데이터 가져오기</h4>
+                <p className="text-sm text-indigo-800 mb-4">
+                  엑셀, 노션, PDF 등에서 관리하던 기존 지원현황을 업로드하면 관리자가 검토 후 잡트래커 데이터베이스로 이전해드립니다.
+                </p>
+                <ul className="text-sm text-indigo-700 mb-4 space-y-1">
+                  <li>• 지원 가능한 형식: Excel(.xlsx, .xls), PDF(.pdf), CSV(.csv)</li>
+                  <li>• 관리자가 데이터를 검토하고 일관된 형식으로 정리</li>
+                  <li>• 처리 상태를 실시간으로 확인 가능</li>
+                </ul>
+                <Link to="/migration">
+                  <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white">
+                    <Upload className="w-4 h-4 mr-2" />
+                    마이그레이션 페이지로 이동
+                  </Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
 
