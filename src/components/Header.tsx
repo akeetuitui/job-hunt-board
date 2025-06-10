@@ -2,8 +2,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Home, Bell, Check } from "lucide-react";
+import { LogOut, User, Home, Bell, Check, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRoles } from "@/hooks/useUserRoles";
 import { useNotifications } from "@/hooks/useNotifications";
 import {
   DropdownMenu,
@@ -18,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 const Header = () => {
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { isAdmin } = useUserRoles();
   const { 
     notifications, 
     unreadCount, 
@@ -41,6 +43,13 @@ const Header = () => {
     { name: "설정", href: "/settings" },
   ];
 
+  // 관리자에게만 관리자 메뉴 표시
+  const adminNavigation = isAdmin ? [
+    { name: "관리자", href: "/admin", icon: Shield },
+  ] : [];
+
+  const allNavigation = [...navigation, ...adminNavigation];
+
   return (
     <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-white/20 sticky top-0 z-50">
       <div className="container mx-auto px-4">
@@ -50,17 +59,18 @@ const Header = () => {
               잡트래커
             </Link>
             <nav className="hidden md:flex space-x-6">
-              {navigation.map((item) => (
+              {allNavigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    "text-sm font-medium transition-all duration-300 hover:text-indigo-600 px-3 py-2 rounded-lg hover:bg-white/50 backdrop-blur-sm",
+                    "text-sm font-medium transition-all duration-300 hover:text-indigo-600 px-3 py-2 rounded-lg hover:bg-white/50 backdrop-blur-sm flex items-center gap-2",
                     location.pathname === item.href
                       ? "text-indigo-600 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200/50 shadow-sm"
                       : "text-gray-600"
                   )}
                 >
+                  {item.icon && <item.icon className="w-4 h-4" />}
                   {item.name}
                 </Link>
               ))}
