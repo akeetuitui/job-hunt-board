@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -92,11 +93,15 @@ const Calendar = () => {
       case "pending":
         return "지원 마감";
       case "applied":
-        return "서류 결과 발표";
+        return "서류 접수";
       case "aptitude":
         return "인적성/역량검사";
       case "interview":
         return "면접";
+      case "passed":
+        return "최종 합격";
+      case "rejected":
+        return "불합격";
       default:
         return "일정";
     }
@@ -106,6 +111,8 @@ const Calendar = () => {
     switch (status) {
       case "pending":
         return "deadline";
+      case "applied":
+        return "follow-up";
       case "aptitude":
         return "aptitude";
       case "interview":
